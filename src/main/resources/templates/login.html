@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sun-mote login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+
+<div class="limiter" id="app">
+
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="images/logo.png" style="margin-top: 15%" alt="IMG">
+            </div>
+
+            <form action="/login" method="post" class="login100-form validate-form">
+					<span class="login100-form-title">
+						User Login
+					</span>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" type="text" name="username" placeholder="username">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" type="password" name="password" placeholder="Password">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn">
+                        Login
+                    </button>
+                </div>
+
+                <div class="text-center p-t-12">
+						<span class="txt1">
+						</span>
+                    <a class="txt2" href="#">
+                    </a>
+                </div>
+
+                <div class="text-center p-t-136">
+                    <a class="txt2" href="#">
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="vendor/bootstrap/js/popper.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="vendor/select2/select2.min.js"></script>
+<script src="vendor/tilt/tilt.jquery.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+
+<script>
+
+    var commonUtil = {
+        /**
+         * 弹出消息框
+         * @param msg 消息内容
+         * @param type 消息框类型（参考bootstrap的alert）
+         */
+        alert: function (msg, type) {
+            if (typeof (type) == "undefined") { // 未传入type则默认为success类型的消息框
+                type = "success";
+            }
+            // 创建bootstrap的alert元素
+            var divElement = $("<div></div>").addClass('alert').addClass('alert-' + type).addClass('col-md-4').addClass('col-md-offset-4');
+            divElement.css({ // 消息框的定位样式
+                "position": "absolute",
+                "left": "33%",
+                "top": "12%"
+            });
+            divElement.text(msg); // 设置消息框的内容
+            // 消息框添加可以关闭按钮
+            var closeBtn = $('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>');
+            $(divElement).append(closeBtn);
+            // 消息框放入到页面中
+            $('body').append(divElement);
+            return divElement;
+        },
+
+        /**
+         * 短暂显示后上浮消失的消息框
+         * @param msg 消息内容
+         * @param type 消息框类型
+         */
+        message: function (msg, type) {
+            var divElement = commonUtil.alert(msg, type); // 生成Alert消息框
+            var isIn = false; // 鼠标是否在消息框中
+
+            divElement.on({ // 在setTimeout执行之前先判定鼠标是否在消息框中
+                mouseover: function () {
+                    isIn = true;
+                },
+                mouseout: function () {
+                    isIn = false;
+                }
+            });
+
+            // 短暂延时后上浮消失
+            setTimeout(function () {
+                var IntervalMS = 20; // 每次上浮的间隔毫秒
+                var floatSpace = 60; // 上浮的空间(px)
+                var nowTop = divElement.offset().top; // 获取元素当前的top值
+                var stopTop = nowTop - floatSpace;    // 上浮停止时的top值
+                divElement.fadeOut(IntervalMS * floatSpace); // 设置元素淡出
+
+                var upFloat = setInterval(function () { // 开始上浮
+                    if (nowTop >= stopTop) { // 判断当前消息框top是否还在可上升的范围内
+                        divElement.css({"top": nowTop--}); // 消息框的top上升1px
+                    } else {
+                        clearInterval(upFloat); // 关闭上浮
+                        divElement.remove();    // 移除元素
+                    }
+                }, IntervalMS);
+
+                if (isIn) { // 如果鼠标在setTimeout之前已经放在的消息框中，则停止上浮
+                    clearInterval(upFloat);
+                    divElement.stop();
+                }
+
+                divElement.hover(function () { // 鼠标悬浮时停止上浮和淡出效果，过后恢复
+                    clearInterval(upFloat);
+                    divElement.stop();
+                }, function () {
+                    divElement.fadeOut(IntervalMS * (nowTop - stopTop)); // 这里设置元素淡出的时间应该为：间隔毫秒*剩余可以上浮空间
+                    upFloat = setInterval(function () { // 继续上浮
+                        if (nowTop >= stopTop) {
+                            divElement.css({"top": nowTop--});
+                        } else {
+                            clearInterval(upFloat); // 关闭上浮
+                            divElement.remove();    // 移除元素
+                        }
+                    }, IntervalMS);
+                });
+            }, 1500);
+        }
+    }
+
+    let uri = window.location.search.substring(1);
+    let params = new URLSearchParams(uri);
+    if (params.has("error")) {
+        commonUtil.message("用户名或密码错误", "danger");
+    }
+
+
+</script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="js/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15" id="app">
+    <div class="row">
+        <div class="col-md-6 col-xl-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body clearfix">
+                    <div class="flex-box">
+                        <span class="img-avatar img-avatar-48 bg-translucent"><i
+                                class="mdi mdi-deskphone fs-22"></i></span>
+                        <span class="fs-22 lh-22">{{accountRecharge}} USD</span>
+                    </div>
+                    <div class="text-right">账户充值总额</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">充值记录</div>
+
+                    <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
+                        充值申请
+                    </button>
+                    <!--fade 淡入淡出-->
+                    <div class="modal fade" id="myModal" aria-labelledby="myModallabel" aria-hidden="true"
+                         tabindex="-1">
+                        <div class="modal-dialog modal-lg" role="document">
+
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myModallabel">充值申请</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <label for="rechargeAmount" class="col-sm-2 col-form-label">金额：</label>
+                                                <div class="col-sm-10">
+                                                    <input type="number" value="" id="rechargeAmount"
+                                                           placeholder="请输入..."
+                                                           class="form-control" onchange="onDepositChange()" required>
+                                                    <div class="invalid-feedback">
+                                                        请输入金额
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="currency" class="col-sm-2 col-form-label">币种：</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="currency" placeholder="currency"
+                                                           class="form-control" readonly="readonly" value="USD">
+                                                </div>
+                                            </div>
+                                            <!--                                            <div class="form-group row">-->
+                                            <!--                                                <label for="remark" class="col-sm-2 col-form-label">备注：</label>-->
+                                            <!--                                                <div class="col-sm-10">-->
+                                            <!--                                                    <input type="text" value="" id="remark" placeholder="请输入..."-->
+                                            <!--                                                           class="form-control">-->
+                                            <!--                                                </div>-->
+                                            <!--                                            </div>-->
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭
+                                        </button>
+                                        <button class="btn btn-success" type="button"
+                                                onclick="onAccountRechargeApproval()">确认
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </header>
+                <div class="card-body">
+                    <table id="tb_departments"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/main.min.js"></script>
+<script type="text/javascript" src="js/Chart.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios-0.18.0.js"></script>
+<script type="text/javascript" src="js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript">
+
+    var accountId = "";
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            accountId: "",
+            accountRecharge: "加载中...",
+        },
+        created() {
+            let uri = window.location.search.substring(1);
+            let params = new URLSearchParams(uri);
+            this.$data.accountId = params.get("accountId");
+            accountId = params.get("accountId");
+            axios.get("/user/account_recharge/amount?accountId=" + this.$data.accountId).then((response) => {
+                this.$data.accountRecharge = response.data;
+            });
+        },
+        methods: {}
+    });
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: '/user/account_recharge_approval/list?accountId=' + vue.$data.accountId,
+        method: 'get',
+        dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
+        uniqueId: 'id',
+        idField: 'id',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        //clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
+
+        pagination: true,                    // 是否显示分页
+        sortOrder: "desc",                    // 排序方式
+        queryParams: function (params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order      // 排序方式'asc' 'desc'
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 20,                        // 每页的记录行数
+        pageList: [20, 40, 80, 100],         // 可供选择的每页的行数
+
+        columns: [
+            {
+                field: 'accountId',
+                title: '账户ID',
+                align: 'center',
+                valign: 'middle'
+            },
+            {
+                field: 'createdAt',
+                title: '创建时间',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (row) {
+                    if (row == null) {
+                        return "未知";
+                    }
+                    row = row.replace(/T/, " ");
+                    row = row.replace(/\./, " ");
+                    row = row.replace(/\+/, " ");
+                    row = row.substr(0, 20);
+                    return row;
+                }
+            }, {
+                field: 'rechargeAmount',
+                title: '充值金额',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    return row.rechargeAmount + ' $';
+                }
+            }, {
+                field: 'payAmount',
+                title: '实际支付金额',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    return row.payAmount + ' $';
+                }
+            }, {
+                field: 'targetCurrencyAmount',
+                title: '汇率结算金额',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    return row.targetCurrencyAmount + ' ' + row.targetCurrency;
+                }
+            }, {
+                field: 'exchangeRate',
+                title: '汇率',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'targetCurrency',
+                title: '结算币种',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'status',
+                title: '审批状态',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    if (row.status === 0) {
+                        return '<span class="badge badge-dark">待审批</span>';
+                    } else if (row.status === 1) {
+                        return '<span class="badge badge-success">已审批</span>';
+                    } else if (row.status === 2) {
+                        return '<span class="badge badge-danger">已拒绝</span>';
+                    }
+                }
+            },
+        ],
+        onLoadSuccess: function (data) {
+            $("[data-toggle='tooltip']").tooltip();
+
+        }
+    });
+
+
+    function onAccountRechargeApproval() {
+        const d = $('#rechargeAmount');
+        if (d.val() === '') {
+            d.addClass("is-invalid")
+            return
+        }
+        d.removeClass("is-invalid")
+        $.post("/user/account_recharge_approval/" + accountId, {
+            "rechargeAmount": d.val()
+        }, function (data, status) {
+            $('#myModal').modal("hide");
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/user/account_recharge_approval/list?accountId=' + accountId
+            });
+        });
+        d.val('')
+
+    }
+
+    function onDepositChange() {
+        $('#rechargeAmount').removeClass("is-invalid")
+    }
+
+</script>
+</body>
+</html>

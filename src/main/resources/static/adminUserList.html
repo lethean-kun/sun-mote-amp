@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="js/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15" id="app">
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">所有用户</div>
+
+                    <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
+                        创建用户
+                    </button>
+                    <!--fade 淡入淡出-->
+                    <div class="modal fade" id="myModal" aria-labelledby="myModallabel" aria-hidden="true"
+                         tabindex="-1">
+                        <div class="modal-dialog modal-lg" role="document">
+
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myModallabel">创建用户</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <label for="username" class="col-sm-3 col-form-label">用户名：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="username" placeholder="请输入..."
+                                                           class="form-control" onchange="" required>
+                                                    <div class="invalid-feedback">
+                                                        请输入用户名..
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="password" class="col-sm-3 col-form-label">密码：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="password" id="password" placeholder="请输入..."
+                                                           class="form-control" value="">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="rebate" class="col-sm-3 col-form-label">返点：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="rebate" placeholder="请输入..."
+                                                           class="form-control" value="">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="corpName" class="col-sm-3 col-form-label">公司名：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="corpName" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭
+                                        </button>
+                                        <button class="btn btn-success" type="button"
+                                                onclick="onCreateUser()">确认
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="card-body">
+                    <table id="tb_departments"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/main.min.js"></script>
+<script type="text/javascript" src="js/Chart.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios-0.18.0.js"></script>
+<script type="text/javascript" src="js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript">
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: '/user/list',
+        method: 'get',
+        dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
+        uniqueId: 'id',
+        idField: 'id',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        //clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
+
+        pagination: true,                    // 是否显示分页
+        sortOrder: "desc",                    // 排序方式
+        queryParams: function (params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order      // 排序方式'asc' 'desc'
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 20,                        // 每页的记录行数
+        pageList: [20, 40, 80, 100],         // 可供选择的每页的行数
+
+        columns: [
+            {
+                field: 'id',
+                title: '用户ID',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'createdAt',
+                title: '创建时间',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (row) {
+                    if (row == null) {
+                        return "未知";
+                    }
+                    row = row.replace(/T/, " ");
+                    row = row.replace(/\./, " ");
+                    row = row.replace(/\+/, " ");
+                    row = row.substr(0, 20);
+                    return row;
+                }
+            }, {
+                field: 'username',
+                title: '用户名',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'corpName',
+                title: '公司名称',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'rebate',
+                title: '返点',
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'role',
+                title: '用户角色',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    if (row.role === 'ADMIN') {
+                        return '<span class="badge badge-danger">管理员</span>';
+                    } else {
+                        return '<span class="badge badge-success">普通成员</span>';
+                    }
+                }
+            }, {
+                field: 'operate',
+                title: '操作',
+                align: 'center',
+                valign: 'middle',
+                clickToSelect: false,
+                formatter: function (value, row, index) {
+                    return userBtnGroup(row, index);
+                },
+                events: {
+                    'click #user-pay': function (event, value, row, index) {
+                        showUserPays(row);
+                    },
+                    'click #user-account': function (event, value, row, index) {
+                        showUserAccounts(row);
+                    },
+                    'click #user-account-recharge': function (event, value, row, index) {
+                        showUserAccountRecharge(row);
+                    },
+
+
+                }
+            }
+        ],
+        onLoadSuccess: function (data) {
+            $("[data-toggle='tooltip']").tooltip();
+        }
+    });
+
+    function userBtnGroup(row, index) {
+        return '<button id="user-pay" class=\'btn btn-primary \' >付款</button>  ' +
+            '<button id="user-account" class=\'btn btn-primary \'>开户</button>  ' +
+            '<button id="user-account-recharge" class=\'btn btn-primary \'>充值</button>  ' +
+            '<button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >修改</button>' +
+            '                    <!--fade 淡入淡出-->\n' +
+            '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
+            '                         tabindex="-1">\n' +
+            '                        <div class="modal-dialog">\n' +
+            '                            <div class="modal-content">\n' +
+            '                                <div class="modal-header">\n' +
+            '                                    <h5 class="modal-title" id="myModallabel' + index + '">修改用户</h5>\n' +
+            '                                    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">\n' +
+            '                                        &times;\n' +
+            '                                    </button>\n' +
+            '                                </div>\n' +
+            '                                    <div class="modal-body">\n' +
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">用户名：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="text" readonly="readonly" value="' + row.username + '" name="username"\n' +
+            '                                                       placeholder="username"  class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">密码：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="text" id = "password' + row.id + '" value="" name="password"\n' +
+            '                                                       placeholder="password" class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">返点：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="number" value="' + row.rebate + '" id = "rebate' + row.id + '" value="" name="rebate"\n' +
+            '                                                       placeholder="rebate" class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="modal-footer">\n' +
+            '                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭\n' +
+            '                                        </button>\n' +
+            '                                        <button class="btn btn-success"  type="button" onclick="onUpdate(' + row.id + ',$(\'#password' + row.id + '\').val(),$(\'#rebate' + row.id + '\').val())">通过</button>\n' +
+            '                                    </div>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                    </div> ';
+    }
+
+    function showUserPays(row) {
+        parent.$(parent.document).data('multitabs').create({
+            iframe: true,
+            title: row.username + " 的付款记录",
+            url: 'adminUserPay.html?userId=' + row.id,
+        }, true);
+    }
+
+    function showUserAccounts(row) {
+        parent.$(parent.document).data('multitabs').create({
+            iframe: true,
+            title: row.username + " 的开户记录",
+            url: 'adminUserAccount.html?userId=' + row.id,
+        }, true);
+    }
+
+    function showUserAccountRecharge(row) {
+        parent.$(parent.document).data('multitabs').create({
+            iframe: true,
+            title: row.username + " 的充值记录",
+            url: 'adminUserAccountRecharge.html?userId=' + row.id,
+        }, true);
+    }
+
+    function onCreateUser() {
+        $.post("/admin/user", {
+            "username": $("#username").val(),
+            "password": $("#password").val(),
+            "corpName": $("#corpName").val(),
+            "rebate": $("#rebate").val()
+        }, function (data, status) {
+            $('#myModal').modal("hide");
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/user/list'
+            });
+        });
+    }
+
+    function onUpdate(id, password, rebate) {
+        $.post("/admin/user/" + id, {
+            "password": password,
+            "rebate": rebate
+        }, function (data, status) {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/user/list'
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

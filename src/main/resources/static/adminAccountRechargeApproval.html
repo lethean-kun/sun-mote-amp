@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>首页</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="js/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container-fluid p-t-15" id="app">
+    <div class="row">
+        <div class="col-md-6 col-xl-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body clearfix">
+                    <div class="flex-box">
+                        <span class="img-avatar img-avatar-48 bg-translucent"><i
+                                class="mdi mdi-deskphone fs-22"></i></span>
+                        <span class="fs-22 lh-22">{{accountRechargeAmount}} USD</span>
+                    </div>
+                    <div class="text-right">账户充值总额</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card bg-purple text-white">
+                <div class="card-body clearfix">
+                    <div class="flex-box">
+                        <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-apps fs-22"></i></span>
+                        <span class="fs-22 lh-22">{{accountCount}} 个</span>
+                    </div>
+                    <div class="text-right">账户数</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-12">
+            <div class="card">
+                <header class="card-header">
+                    <div class="card-title">用户充值记录</div>
+                </header>
+                <div class="card-body">
+                    <div class="btn-group">
+                        <div class="input-group mb-3">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                {{actorBtn}}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
+                                        v-for="(value, key) in select_map">{{(value==''||value==null) ? key : value}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="tb_departments"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/popper.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/main.min.js"></script>
+<script type="text/javascript" src="js/Chart.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios-0.18.0.js"></script>
+<script type="text/javascript" src="js/jquery-confirm/jquery-confirm.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript">
+    var select_key = "0"
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            accountRechargeAmount: "加载中...",
+            accountCount: "加载中...",
+            actorBtn: "全部",
+            select_map: {"0": "全部", "1": "已审批", "2": "待审批"},
+
+        },
+        created() {
+            axios.get("/admin/user/account_recharge/amount").then((response) => {
+                this.$data.accountRechargeAmount = response.data;
+            });
+            axios.get("/admin/user/account/total").then((response) => {
+                this.$data.accountCount = response.data;
+            });
+
+        },
+        methods: {
+            selectActor: function (key) {
+                select_key = key
+                let value = this.$data.select_map[key];
+                this.$data.actorBtn = (value === "" || value == null) ? key : value;
+                if (key === "0") {
+                    $('#tb_departments').bootstrapTable('refresh', {
+                        url: '/admin/user/account_recharge_approval'
+                    });
+                } else if (key === "1") {
+                    $('#tb_departments').bootstrapTable('refresh', {
+                        url: '/admin/user/account_recharge_approval?status=1&status=2'
+                    });
+                } else if (key === "2") {
+                    $('#tb_departments').bootstrapTable('refresh', {
+                        url: '/admin/user/account_recharge_approval?status=0'
+                    });
+                }
+            },
+        }
+    });
+    $('#tb_departments').bootstrapTable({
+        classes: 'table table-bordered table-hover table-striped',
+        url: '/admin/user/account_recharge_approval',
+        method: 'get',
+        dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
+        uniqueId: 'id',
+        idField: 'id',             // 每行的唯一标识字段
+        toolbar: '#toolbar',       // 工具按钮容器
+        //clickToSelect: true,     // 是否启用点击选中行
+        showColumns: true,         // 是否显示所有的列
+        showRefresh: true,         // 是否显示刷新按钮
+
+        showToggle: true,        // 是否显示详细视图和列表视图的切换按钮(clickToSelect同时设置为true时点击会报错)
+
+        pagination: true,                    // 是否显示分页
+        sortOrder: "desc",                    // 排序方式
+        queryParams: function (params) {
+            var temp = {
+                limit: params.limit,         // 每页数据量
+                offset: params.offset,       // sql语句起始索引
+                page: (params.offset / params.limit) + 1,
+                sort: params.sort,           // 排序的列名
+                sortOrder: params.order      // 排序方式'asc' 'desc'
+            };
+            return temp;
+        },                                   // 传递参数
+        sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
+        pageNumber: 1,                       // 初始化加载第一页，默认第一页
+        pageSize: 20,                        // 每页的记录行数
+        pageList: [20, 40, 100, 300],         // 可供选择的每页的行数
+
+        columns: [{
+            field: 'username',
+            title: '申请人姓名',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'accountId',
+            title: '账户ID',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "-" : row;
+            }
+        }, {
+            field: 'createdAt',
+            title: '申请时间',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                if (row == null) {
+                    return "未知";
+                }
+                row = row.replace(/T/, " ");
+                row = row.replace(/\./, " ");
+                row = row.replace(/\+/, " ");
+                row = row.substr(0, 20);
+                return row;
+            }
+        }, {
+            field: 'rechargeAmount',
+            title: '充值金额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'payAmount',
+            title: '实际支付金额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (value, row, index) {
+                return row.payAmount + ' $';
+            }
+        }, {
+            field: 'targetCurrencyAmount',
+            title: '汇率结算金额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (value, row, index) {
+                return row.targetCurrencyAmount + ' ' + row.targetCurrency;
+            }
+        }, {
+            field: 'exchangeRate',
+            title: '汇率',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'targetCurrency',
+            title: '结算币种',
+            align: 'center',
+            valign: 'middle'
+        },{
+            field: 'operate',
+            title: '操作',
+            align: 'center',
+            valign: 'middle',
+            clickToSelect: false,
+            formatter: function (value, row, index) {
+                if (row.status === 0) {
+                    return toApprovalBtnGroup(row, index);
+                } else if (row.status === 1) {
+                    return "<button class=\'btn btn-secondary \' >已通过</button>"
+                } else if (row.status === 2) {
+                    return "<button class=\'btn btn-secondary \' >已拒绝</button>"
+                }
+            }
+        }
+        ],
+        onLoadSuccess: function (data) {
+            $("[data-toggle='tooltip']").tooltip();
+        }
+    });
+
+    // 操作按钮
+    function toApprovalBtnGroup(row, index) {
+        return '<button class=\'btn btn-danger \' onclick="onRefuse(' + row.id + ')" >拒绝</button> ' +
+            ' <button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >通过</button>' +
+            '                    <!--fade 淡入淡出-->\n' +
+            '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
+            '                         tabindex="-1">\n' +
+            '                        <div class="modal-dialog">\n' +
+            '                            <div class="modal-content">\n' +
+            '                                <div class="modal-header">\n' +
+            '                                    <h5 class="modal-title" id="myModallabel' + index + '">通过申请</h5>\n' +
+            '                                    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">\n' +
+            '                                        &times;\n' +
+            '                                    </button>\n' +
+            '                                </div>\n' +
+            '                                    <div class="modal-body">\n' +
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">用户名：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="text" readonly="readonly" value="' + row.username + '" name="username"\n' +
+            '                                                       placeholder="username"  class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">汇率：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="number" id = "exchangeRate' + row.id + '" value="" name="exchangeRate"\n' +
+            '                                                       placeholder="请填入..." class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+            '                                        <div class="form-group row">\n' +
+            '                                           <label class="col-sm-3 col-form-label">币种：</label>\n' +
+            '                                           <div class="col-sm-8">\n' +
+            '                                                <input type="text" readonly="readonly" id = "targetCurrency' + row.id + '" value="NGN" name="targetCurrency"\n' +
+            '                                                       placeholder="请填入..." class="form-control">\n' +
+            '                                           </div>\n' +
+            '                                        </div>\n' +
+            '                                    </div>\n' +
+            '                                    <div class="modal-footer">\n' +
+            '                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭\n' +
+            '                                        </button>\n' +
+            '                                        <button class="btn btn-success"  type="button" onclick="onAssent(' + row.id + ',$(\'#accountId' + row.id + '\').val(), $(\'#exchangeRate' + row.id + '\').val())">通过</button>\n' +
+            '                                    </div>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                    </div> ';
+    }
+
+    function onRefuse(id, deposit) {
+        $.post("/admin/user/account_recharge_approval/" + id, {
+            "status": 2
+        }, function (data, status) {
+            refreshNow()
+        });
+    }
+
+    function onAssent(id, accountId, exchangeRate) {
+        $.post("/admin/user/account_recharge_approval/" + id, {
+            "accountId": accountId,
+            "exchangeRate": exchangeRate,
+            "status": 1
+        }, function (data, status) {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            refreshNow()
+        });
+    }
+
+    function refreshNow() {
+        if (select_key === "0") { // 全部
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/admin/user/account_recharge_approval'
+            });
+        } else if (select_key === "1") { // 已审批
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/admin/user/account_recharge_approval?status=1&status=2'
+            });
+        } else if (select_key === "2") { // 未审批
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/admin/user/account_recharge_approval?status=0'
+            });
+        }
+    }
+
+</script>
+</body>
+</html>
