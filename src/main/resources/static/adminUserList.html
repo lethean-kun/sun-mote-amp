@@ -26,9 +26,9 @@
                     <div class="btn-group">
                         <div class="input-group mt-4" >
                             <!--                        <div class="card-title">所有用户-3</div>-->
-                            <div class="card-title w-auto"><label>
+                            <div class="card-title" style="width: 200px">
                                 <input type="text" class="form-control" name="daterange"/>
-                            </label></div>
+                            </div>
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
                                     data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
@@ -196,6 +196,9 @@
         $('input[name="daterange"]').daterangepicker({
             opens: 'left'
         }, function (start, end, label) {
+            $('#tb_departments').bootstrapTable('refresh', {
+                url:   '/test?start=' + start
+            });
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
