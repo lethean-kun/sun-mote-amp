@@ -18,6 +18,32 @@ create table sunmote.User
 insert into sunmote.User (username, password, corpName, status, rebate, isDelete, role)
     value ('admin','$2a$10$m4Zpfj/pWDfqV4sBqs6f0O9mTGwOnVhkIDk90u2vieHjxGzxXNZii','光晨科技',0,0.12,0,'ADMIN');
 
+create table sunmote.UserAccount
+(
+    id        bigint unsigned auto_increment primary key,
+    userId    bigint unsigned not null comment '用户ID',
+    accountId varchar(255)                          not null comment '账号id',
+    platform  varchar(64) not null comment '账号所属平台: Google、Facebook、Twitter...',
+
+    status    tinyint     default 0                 not null comment '状态',
+    isDelete  tinyint     default 0                 not null comment '是否已删除',
+    createdAt datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updatedAt datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+) comment '用户拥有的账号表';
+
+create table sunmote.AccountBill
+(
+    id        bigint unsigned auto_increment primary key,
+    accountId varchar(255)                          not null comment '账号id',
+    platform  varchar(64) not null comment '账号所属平台: Google、Facebook、Twitter...',
+    amount    varchar(64) not null comment '消费额',
+
+    status    tinyint     default 0                 not null comment '状态',
+    isDelete  tinyint     default 0                 not null comment '是否已删除',
+    createdAt datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updatedAt datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+) comment '用户账户账单表';
+
 create table sunmote.DepositApproval
 (
     id        bigint unsigned auto_increment
