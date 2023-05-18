@@ -14,10 +14,18 @@ public class User {
     private String username;
     private String password;
     private String corpName;
+    private String corpSubject;
+    private String cooperationMode;
+    private String settlement;
+    private String currency;
+    private Double serviceFee;
+    private Double rebate;
+    private String remarks;
+    private String source;
+
+
     private Long status;
     private Role role;
-    private Double rebate;
-
     private Date createdAt;
     private Date updatedAt;
 

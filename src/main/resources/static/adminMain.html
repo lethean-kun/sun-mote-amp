@@ -10,6 +10,10 @@
     <link href="js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
     <link href="css/materialdesignicons.min.css" rel="stylesheet">
     <link href="css/style.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 </head>
 
 <body>
@@ -72,11 +76,13 @@
         <div class="col-lg-12">
             <div class="card">
                 <header class="card-header">
-                    <div class="card-title">用户付款记录</div>
-                </header>
-                <div class="card-body">
+
                     <div class="btn-group">
-                        <div class="input-group mb-3">
+                        <div class="input-group mt-4">
+                            <!--                        <div class="card-title">所有用户-3</div>-->
+                            <div class="card-title" style="width: 200px">
+                                <input type="text" class="form-control" name="daterange"/>
+                            </div>
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
                                     data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
@@ -84,11 +90,150 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
-                                        v-for="(value, key) in select_map">{{(value==''||value==null) ? key : value}}
+                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :
+                                    value}}
                                 </button>
+                            </div>
+                            <label>
+                                <input type="text" class="form-control" value="搜索"/>
+                            </label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
+                        创建客户
+                    </button>
+
+                    <!--fade 淡入淡出-->
+                    <div class="modal fade" id="myModal" aria-labelledby="myModallabel" aria-hidden="true"
+                         tabindex="-1">
+                        <div class="modal-dialog modal-lg" role="document">
+
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myModallabel">创建客户</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <label for="username" class="col-sm-3 col-form-label">用户名：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="username" placeholder="请输入..."
+                                                           class="form-control" onchange="" required>
+                                                    <div class="invalid-feedback">
+                                                        请输入用户名..
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="password" class="col-sm-3 col-form-label">密码：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="password" id="password" placeholder="请输入..."
+                                                           class="form-control" value="">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="corpName" class="col-sm-3 col-form-label">客户名：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="corpName" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="corpSubject" class="col-sm-3 col-form-label">签约主体：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="corpSubject" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="cooperationMode"
+                                                       class="col-sm-3 col-form-label">合作模式：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="cooperationMode"
+                                                           placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="settlement" class="col-sm-3 col-form-label">结算方式：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="settlement" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="currency" class="col-sm-3 col-form-label">结算币种：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="currency" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="rebate" class="col-sm-3 col-form-label">返点：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="rebate" placeholder="请输入..."
+                                                           class="form-control" value="">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="serviceFee" class="col-sm-3 col-form-label">服务费：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" id="serviceFee" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="remarks" class="col-sm-3 col-form-label">备注：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="remarks" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="source" class="col-sm-3 col-form-label">来源：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" value="" id="source" placeholder="请输入..."
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭
+                                        </button>
+                                        <button class="btn btn-success" type="button"
+                                                onclick="onCreateUser()">确认
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
+                </header>
+
+                <div class="card-body">
+                    <!--                    <div class="btn-group">-->
+                    <!--                        <div class="input-group mb-3">-->
+                    <!--                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"-->
+                    <!--                                    data-toggle="dropdown"-->
+                    <!--                                    aria-haspopup="true" aria-expanded="false">-->
+                    <!--                                {{actorBtn}}-->
+                    <!--                            </button>-->
+                    <!--                            <div class="dropdown-menu dropdown-menu-right">-->
+                    <!--                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"-->
+                    <!--                                        v-for="(value, key) in select_map">{{(value==''||value==null) ? key : value}}-->
+                    <!--                                </button>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                     <table id="tb_departments"></table>
                 </div>
             </div>
@@ -98,7 +243,7 @@
 
 </div>
 
-<script type="text/javascript" src="js/jquery.min.js"></script>
+<!--<script type="text/javascript" src="js/jquery.min.js"></script>-->
 <script type="text/javascript" src="js/popper.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/main.min.js"></script>
@@ -110,6 +255,16 @@
 <script type="text/javascript" src="js/bootstrap-table/bootstrap-table.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script type="text/javascript">
+    $(function () {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function (start, end, label) {
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/user/list?start=' + start + "&end=" + end
+            });
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
     var select_key = "0"
     var vue = new Vue({
         el: '#app',
@@ -160,7 +315,7 @@
     });
     $('#tb_departments').bootstrapTable({
         classes: 'table table-bordered table-hover table-striped',
-        url: '/admin/user/deposit_approval',
+        url: '/user/list',
         method: 'get',
         dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
         uniqueId: 'id',
@@ -190,68 +345,35 @@
         pageList: [10, 50, 100, 300],         // 可供选择的每页的行数
 
         columns: [{
-            field: 'id',
-            title: 'ID',
+            field: 'corpName',
+            title: '客户名称',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
+            valign: 'middle'
         }, {
-            field: 'userId',
-            title: '申请人ID',
+            field: 'corpName',
+            title: '广告花费',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
+            valign: 'middle'
         }, {
-            field: 'username',
-            title: '申请人姓名',
+            field: 'corpName',
+            title: '账单余额',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
+            valign: 'middle'
         }, {
-            field: 'deposit',
-            title: '申请金额',
+            field: 'settlement',
+            title: '结算方式',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
+            valign: 'middle'
         }, {
-            field: 'currency',
-            title: '币种',
+            field: 'rebate',
+            title: '返点',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
+            valign: 'middle'
         }, {
-            field: 'remark',
-            title: '申请说明',
+            field: 'serviceFee',
+            title: '服务费',
             align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
-        }, {
-            field: 'createdAt',
-            title: '申请时间',
-            align: 'center',
-            valign: 'middle',
-            formatter: function (row) {
-                if (row == null) {
-                    return "未知";
-                }
-                row = row.replace(/T/, " ");
-                row = row.replace(/\./, " ");
-                row = row.replace(/\+/, " ");
-                row = row.substr(0, 20);
-                return row;
-            }
+            valign: 'middle'
         }, {
             field: 'operate',
             title: '操作',
@@ -350,6 +472,27 @@
                 url: '/admin/user/deposit_approval?status=0'
             });
         }
+    }
+
+    function onCreateUser() {
+        $.post("/admin/user", {
+            "username": $("#username").val(),
+            "password": $("#password").val(),
+            "corpName": $("#corpName").val(),
+            "corpSubject": $("#corpSubject").val(),
+            "cooperationMode": $("#cooperationMode").val(),
+            "settlement": $("#settlement").val(),
+            "currency": $("#currency").val(),
+            "serviceFee": $("#serviceFee").val(),
+            "remarks": $("#remarks").val(),
+            "source": $("#source").val(),
+            "rebate": $("#rebate").val()
+        }, function (data, status) {
+            $('#myModal').modal("hide");
+            $('#tb_departments').bootstrapTable('refresh', {
+                url: '/user/list'
+            });
+        });
     }
 
 </script>

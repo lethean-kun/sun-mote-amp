@@ -15,6 +15,8 @@ public class QueryPageBean implements Serializable {
     private String sortOrder;
     private String sort;
     private Integer offset;
+    private String start;
+    private String end;
 
     public QueryPageBean(Integer page, Integer limit, String sort, Integer offset) {
         this.page = page;
