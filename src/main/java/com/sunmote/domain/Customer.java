@@ -1,5 +1,7 @@
 package com.sunmote.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @TableName("Customer")
 public class Customer {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String corpName;
     private String corpSubject;

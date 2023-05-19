@@ -103,7 +103,7 @@
                             <div class="dropdown-menu dropdown-menu-right">
                                 <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
                                         v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :
-                                        value}}
+                                    value}}
                                 </button>
                             </div>
                             <label>
@@ -449,7 +449,7 @@
         }, function (data, status) {
             $('#myModal').modal("hide");
             $('#tb_departments').bootstrapTable('refresh', {
-                url: '/customerAccount/list'
+                url: '/customerAccount/list?customerId=' + customerIdC
             });
         });
     }

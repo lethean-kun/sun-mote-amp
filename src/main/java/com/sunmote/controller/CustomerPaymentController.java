@@ -4,7 +4,9 @@ import com.sunmote.auth.AuthnUserDetails;
 import com.sunmote.common.model.PageResult;
 import com.sunmote.common.model.QueryPageBean;
 import com.sunmote.domain.CustomerAccount;
+import com.sunmote.domain.CustomerPayment;
 import com.sunmote.service.CustomerAccountService;
+import com.sunmote.service.CustomerPaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,32 +17,32 @@ import org.springframework.web.bind.annotation.*;
  * </p>
  */
 @RestController
-@RequestMapping("/customerAccount")
+@RequestMapping("/customerPayment")
 @Slf4j
-public class CustomerAccountController {
+public class CustomerPaymentController {
 
-    final CustomerAccountService customerAccountService;
+    final CustomerPaymentService customerPaymentService;
 
-    public CustomerAccountController(
-            final CustomerAccountService customerAccountService
+    public CustomerPaymentController(
+            final CustomerPaymentService customerPaymentService
     ) {
 
-        this.customerAccountService = customerAccountService;
+        this.customerPaymentService = customerPaymentService;
     }
 
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public PageResult<CustomerAccount> readUser(
+    public PageResult<CustomerPayment> readCustomerPayment(
             @RequestParam(required = false) Long customerId,
             QueryPageBean queryPageBean
     ) {
-        return customerAccountService.readList(customerId, queryPageBean);
+        return customerPaymentService.readList(customerId, queryPageBean);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void createCustomer(CustomerAccount customer) {
-        customerAccountService.create(customer);
+    public void createCustomerPayment(CustomerPayment customer) {
+        customerPaymentService.create(customer);
     }
 
     // 获取当前登录的用户

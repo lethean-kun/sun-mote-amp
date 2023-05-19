@@ -42,12 +42,12 @@ CREATE TABLE Customer (
 
 CREATE TABLE sunmote.CustomerAccount (
     id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    customerId  BIGINT UNSIGNED                    NOT NULL COMMENT '客户ID',
-    accountName VARCHAR(255)                       NOT NULL COMMENT '账号名',
+    customerId  BIGINT UNSIGNED                    NULL COMMENT '客户ID',
+    accountName VARCHAR(255)                       NULL COMMENT '账号名',
     accountId   VARCHAR(255)                       NOT NULL COMMENT '账号id',
 
-    budgetLimit VARCHAR(255)                       NOT NULL COMMENT '预算总额',
-    costAmount  VARCHAR(255)                       NOT NULL COMMENT '花费总额',
+    budgetLimit VARCHAR(255)                       NULL COMMENT '预算总额',
+    costAmount  VARCHAR(255)                       NULL COMMENT '花费总额',
     platform    VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
     currency    VARCHAR(32)                        NULL COMMENT '美金/人民币/USDT/奈拉/比索',
 

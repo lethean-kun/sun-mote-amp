@@ -15,11 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 安全控制器
  * </p>
- *
- * @author: JavaLover
- * @date: 2021/4/12 18:03
  */
 @RestController
 @RequestMapping("/customer")
@@ -30,7 +26,7 @@ public class CustomerController {
 
     public CustomerController(
 
-        final CustomerService customerService
+            final CustomerService customerService
     ) {
 
         this.customerService = customerService;
@@ -38,7 +34,7 @@ public class CustomerController {
 
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public PageResult<Customer> readUser(QueryPageBean queryPageBean) {
+    public PageResult<Customer> readCustomer(QueryPageBean queryPageBean) {
         return customerService.readList(queryPageBean);
     }
 

@@ -1,5 +1,7 @@
 package com.sunmote.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountRechargeApproval {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String accountId;
     // 目标币种

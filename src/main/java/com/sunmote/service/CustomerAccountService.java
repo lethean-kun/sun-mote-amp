@@ -10,6 +10,6 @@ public interface CustomerAccountService {
 
     void update(Long id, CustomerAccount customerAccount);
 
-    PageResult<CustomerAccount> readList(QueryPageBean queryPageBean);
+    PageResult<CustomerAccount> readList(Long customerId, QueryPageBean queryPageBean);
 
 }

@@ -20,11 +20,7 @@ import java.util.List;
 
 /**
  * <p>
- * 安全控制器
  * </p>
- *
- * @author: JavaLover
- * @date: 2021/4/12 18:03
  */
 @RestController
 @RequestMapping("/admin")

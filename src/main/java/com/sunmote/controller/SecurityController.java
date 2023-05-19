@@ -16,11 +16,8 @@ import java.util.Collection;
 
 /**
  * <p>
- * 安全控制器
  * </p>
  *
- * @author: JavaLover
- * @date: 2021/4/12 18:03
  */
 @Controller
 @Slf4j
