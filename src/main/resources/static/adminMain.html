@@ -14,6 +14,17 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <style>
+        .daterangepicker td.active, .daterangepicker td.active:hover {
+            background-color: #33cabb;
+            border-color: transparent;
+            color: #fff;
+        }
+        .daterangepicker .ranges li.active {
+            background-color: #33cabb;
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
@@ -80,7 +91,7 @@
                     <div class="btn-group">
                         <div class="input-group mt-4">
                             <!--                        <div class="card-title">所有用户-3</div>-->
-                            <div class="card-title" style="width: 200px">
+                            <div class="card-title" style="width: 205px">
                                 <input type="text" class="form-control" name="daterange"/>
                             </div>
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
@@ -120,9 +131,9 @@
                                     <div class="modal-body">
                                         <div class="card-body">
                                             <div class="form-group row">
-                                                <label for="username" class="col-sm-3 col-form-label">用户名：</label>
+                                                <label for="username-i" class="col-sm-3 col-form-label">用户名：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="username" placeholder="请输入..."
+                                                    <input type="text" value="" id="username-i" placeholder="请输入..."
                                                            class="form-control" onchange="" required>
                                                     <div class="invalid-feedback">
                                                         请输入用户名..
@@ -130,75 +141,75 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="password" class="col-sm-3 col-form-label">密码：</label>
+                                                <label for="password-i" class="col-sm-3 col-form-label">密码：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="password" id="password" placeholder="请输入..."
+                                                    <input type="password" id="password-i" placeholder="请输入..."
                                                            class="form-control" value="">
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="corpName" class="col-sm-3 col-form-label">客户名：</label>
+                                                <label for="corpName-i" class="col-sm-3 col-form-label">客户名：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="corpName" placeholder="请输入..."
+                                                    <input type="text" value="" id="corpName-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="corpSubject" class="col-sm-3 col-form-label">签约主体：</label>
+                                                <label for="corpSubject-i" class="col-sm-3 col-form-label">签约主体：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="corpSubject" placeholder="请输入..."
+                                                    <input type="text" value="" id="corpSubject-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="cooperationMode"
+                                                <label for="cooperationMode-i"
                                                        class="col-sm-3 col-form-label">合作模式：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="cooperationMode"
+                                                    <input type="text" value="" id="cooperationMode-i"
                                                            placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="settlement" class="col-sm-3 col-form-label">结算方式：</label>
+                                                <label for="settlement-i" class="col-sm-3 col-form-label">结算方式：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="settlement" placeholder="请输入..."
+                                                    <input type="text" value="" id="settlement-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="currency" class="col-sm-3 col-form-label">结算币种：</label>
+                                                <label for="currency-i" class="col-sm-3 col-form-label">结算币种：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="currency" placeholder="请输入..."
+                                                    <input type="text" value="" id="currency-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="rebate" class="col-sm-3 col-form-label">返点：</label>
+                                                <label for="rebate-i" class="col-sm-3 col-form-label">返点：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="number" id="rebate" placeholder="请输入..."
+                                                    <input type="number" id="rebate-i" placeholder="请输入..."
                                                            class="form-control" value="">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="serviceFee" class="col-sm-3 col-form-label">服务费：</label>
+                                                <label for="serviceFee-i" class="col-sm-3 col-form-label">服务费：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="number" id="serviceFee" placeholder="请输入..."
+                                                    <input type="number" id="serviceFee-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="remarks" class="col-sm-3 col-form-label">备注：</label>
+                                                <label for="remarks-i" class="col-sm-3 col-form-label">备注：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="remarks" placeholder="请输入..."
+                                                    <input type="text" value="" id="remarks-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="source" class="col-sm-3 col-form-label">来源：</label>
+                                                <label for="source-i" class="col-sm-3 col-form-label">来源：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="source" placeholder="请输入..."
+                                                    <input type="text" value="" id="source-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
@@ -257,7 +268,26 @@
 <script type="text/javascript">
     $(function () {
         $('input[name="daterange"]').daterangepicker({
-            opens: 'left'
+            opens: 'left',
+            maxDate : moment(),
+            ranges : {
+                '今日': [moment().startOf('day'), moment()],
+                '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+                '最近7日': [moment().subtract('days', 6), moment()],
+                '最近30日': [moment().subtract('days', 29), moment()]
+            },
+            locale : {
+                applyLabel : '确定',
+                cancelLabel : '取消',
+                fromLabel : '起始时间',
+                toLabel : '结束时间',
+                customRangeLabel : '自定义',
+                daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+                monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                firstDay : 1
+            },
+            alwaysShowCalendars : true
         }, function (start, end, label) {
             $('#tb_departments').bootstrapTable('refresh', {
                 url: '/user/list?start=' + start + "&end=" + end
@@ -345,40 +375,113 @@
         pageList: [10, 50, 100, 300],         // 可供选择的每页的行数
 
         columns: [{
+            field: 'id',
+            title: 'ID',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        },{
             field: 'corpName',
             title: '客户名称',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
-            field: 'corpName',
+            field: 'todo',
             title: '广告花费',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
-            field: 'corpName',
+            field: 'todo1',
             title: '账单余额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
             field: 'settlement',
             title: '结算方式',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
             field: 'rebate',
             title: '返点',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
             field: 'serviceFee',
             title: '服务费',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'corpSubject',
+            title: '客户主体',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'cooperationMode',
+            title: '合作模式',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'currency',
+            title: '币种',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'remarks',
+            title: '备注',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'source',
+            title: '来源',
+            align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
         }, {
             field: 'operate',
             title: '操作',
             align: 'center',
             valign: 'middle',
+            visible: false,
             clickToSelect: false,
             formatter: function (value, row, index) {
                 if (row.status === 0) {
@@ -476,17 +579,17 @@
 
     function onCreateUser() {
         $.post("/admin/user", {
-            "username": $("#username").val(),
-            "password": $("#password").val(),
-            "corpName": $("#corpName").val(),
-            "corpSubject": $("#corpSubject").val(),
-            "cooperationMode": $("#cooperationMode").val(),
-            "settlement": $("#settlement").val(),
-            "currency": $("#currency").val(),
-            "serviceFee": $("#serviceFee").val(),
-            "remarks": $("#remarks").val(),
-            "source": $("#source").val(),
-            "rebate": $("#rebate").val()
+            "username": $("#username-i").val(),
+            "password": $("#password-i").val(),
+            "corpName": $("#corpName-i").val(),
+            "corpSubject": $("#corpSubject-i").val(),
+            "cooperationMode": $("#cooperationMode-i").val(),
+            "settlement": $("#settlement-i").val(),
+            "currency": $("#currency-i").val(),
+            "serviceFee": $("#serviceFee-i").val(),
+            "remarks": $("#remarks-i").val(),
+            "source": $("#source-i").val(),
+            "rebate": $("#rebate-i").val()
         }, function (data, status) {
             $('#myModal').modal("hide");
             $('#tb_departments').bootstrapTable('refresh', {

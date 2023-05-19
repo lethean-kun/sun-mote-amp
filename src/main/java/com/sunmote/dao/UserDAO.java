@@ -1,5 +1,6 @@
 package com.sunmote.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sunmote.common.model.QueryPageBean;
 import com.sunmote.domain.User;
 import org.apache.ibatis.annotations.Insert;
@@ -9,7 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
-public interface UserDAO {
+public interface UserDAO extends BaseMapper<User> {
 
     @Select("select * from User where username = '${username}'")
     User getUserByUsername(String username);
