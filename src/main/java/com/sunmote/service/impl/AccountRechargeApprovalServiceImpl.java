@@ -42,7 +42,7 @@ public class AccountRechargeApprovalServiceImpl implements AccountRechargeApprov
         }
 
         accountRechargeApproval.setTargetCurrency("NGN");
-        accountRechargeApproval.setPayAmount(accountRechargeApproval.getRechargeAmount() * (1 - user.getRebate()));
+//        accountRechargeApproval.setPayAmount(accountRechargeApproval.getRechargeAmount() * (1 - user.getRebate()));
 
         accountRechargeApprovalDAO.createUserAccountRechargeApproval(accountRechargeApproval);
     }

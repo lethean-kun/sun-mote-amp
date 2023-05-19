@@ -10,20 +10,14 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("User")
-public class User {
+@TableName("CustomerAccount")
+public class CustomerAccount {
     private Long id;
     private Long customerId;
-    private String username;
-    private String password;
+    private String accountId;
+    private String platform;
 
     private Long status;
-    private Role role;
     private Date createdAt;
     private Date updatedAt;
-
-    public enum Role {
-        USER,
-        ADMIN
-    }
 }
