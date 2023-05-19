@@ -41,15 +41,20 @@ CREATE TABLE Customer (
 
 
 CREATE TABLE sunmote.CustomerAccount (
-    id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    customerId BIGINT UNSIGNED                    NOT NULL COMMENT '客户ID',
-    accountId  VARCHAR(255)                       NOT NULL COMMENT '账号id',
-    platform   VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
+    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    customerId  BIGINT UNSIGNED                    NOT NULL COMMENT '客户ID',
+    accountName VARCHAR(255)                       NOT NULL COMMENT '账号名',
+    accountId   VARCHAR(255)                       NOT NULL COMMENT '账号id',
 
-    status     TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
-    isDelete   TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
-    createdAt  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
-    updatedAt  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+    budgetLimit VARCHAR(255)                       NOT NULL COMMENT '预算总额',
+    costAmount  VARCHAR(255)                       NOT NULL COMMENT '花费总额',
+    platform    VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
+    currency    VARCHAR(32)                        NULL COMMENT '美金/人民币/USDT/奈拉/比索',
+
+    status      TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
+    isDelete    TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
+    createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    updatedAt   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT '用户拥有的账号表';
 
 CREATE TABLE sunmote.AccountBill (
@@ -57,6 +62,7 @@ CREATE TABLE sunmote.AccountBill (
     accountId VARCHAR(255)                       NOT NULL COMMENT '账号id',
     platform  VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
     amount    VARCHAR(64)                        NOT NULL COMMENT '消费额',
+    date      VARCHAR(64)                        NOT NULL COMMENT '日期 格式 YYYY-MM-DD',
 
     status    TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
     isDelete  TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
@@ -64,51 +70,29 @@ CREATE TABLE sunmote.AccountBill (
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT '用户账户账单表';
 
-CREATE TABLE sunmote.DepositApproval (
-    id        BIGINT UNSIGNED AUTO_INCREMENT
+CREATE TABLE sunmote.CustomerPayment (
+    id         BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
-    deposit   VARCHAR(64)                           NULL COMMENT '付款金额',
-    userId    BIGINT UNSIGNED                       NOT NULL COMMENT '用户ID',
-    remark    VARCHAR(255)                          NULL COMMENT '邮箱',
-    currency  VARCHAR(16) DEFAULT 'USD'             NOT NULL,
-    status    TINYINT     DEFAULT 0                 NOT NULL COMMENT '状态',
-    isDelete  TINYINT     DEFAULT 0                 NOT NULL,
-    createdAt DATETIME    DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
-    updatedAt DATETIME    DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) COMMENT '付款申请';
+    amount     VARCHAR(64)                        NULL COMMENT '付款金额',
+    customerId BIGINT UNSIGNED                    NOT NULL COMMENT '客户ID',
+    remark     VARCHAR(255)                       NULL COMMENT '邮箱',
+
+    status     TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
+    isDelete   TINYINT  DEFAULT 0                 NOT NULL,
+    createdAt  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    updatedAt  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT '客户付款';
 
 
-
-CREATE TABLE sunmote.CreateAccountApproval (
+CREATE TABLE sunmote.AccountRecharge (
     id             BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
-    timeZone       VARCHAR(64)                           NOT NULL COMMENT '时区',
-    accountId      VARCHAR(32)                           NULL COMMENT '账户ID',
-    currency       VARCHAR(16) DEFAULT 'USD'             NOT NULL COMMENT '币种',
-    rechargeAmount DOUBLE      DEFAULT 0                 NULL COMMENT '首次充值金额',
-    prodLink       VARCHAR(128)                          NULL COMMENT '产品链接',
-    userId         BIGINT UNSIGNED                       NOT NULL COMMENT '用户ID',
-    status         TINYINT     DEFAULT 0                 NOT NULL COMMENT '状态',
-    isDelete       TINYINT     DEFAULT 0                 NOT NULL COMMENT '是否已删除',
-    createdAt      DATETIME    DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
-    updatedAt      DATETIME    DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) COMMENT '开户申请';
+    accountId      VARCHAR(32)                        NOT NULL COMMENT '账户ID',
+    rechargeAmount DOUBLE                             NOT NULL COMMENT '充值金额',
 
-
-
-CREATE TABLE sunmote.AccountRechargeApproval (
-    id                   BIGINT UNSIGNED AUTO_INCREMENT
-        PRIMARY KEY,
-    accountId            VARCHAR(32)                        NOT NULL COMMENT '账户ID',
-    rechargeAmount       DOUBLE                             NOT NULL COMMENT '充值金额',
-    payAmount            DOUBLE                             NOT NULL COMMENT '实际支付金额',
-    targetCurrency       VARCHAR(16)                        NOT NULL COMMENT '目标币种',
-    exchangeRate         DOUBLE                             NULL COMMENT '汇率',
-    targetCurrencyAmount DOUBLE                             NULL COMMENT '汇率结算金额',
-    userId               BIGINT UNSIGNED                    NOT NULL COMMENT '用户ID',
-    status               TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
-    isDelete             TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
-    createdAt            DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
-    updatedAt            DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+    status         TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
+    isDelete       TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
+    createdAt      DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    updatedAt      DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT '账户充值申请';
 

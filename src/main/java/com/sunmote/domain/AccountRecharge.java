@@ -10,19 +10,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("CustomerAccount")
-public class CustomerAccount {
+@TableName("AccountRecharge")
+public class AccountRecharge {
     private Long id;
-    private Long customerId;
     private String accountId;
-    private String accountName;
-    private String platform;
-    // 预算总额
-    private String budgetLimit;
-    // 花费总额
-    private String costAmount;
-    // 币种
-    private String currency;
+    private Double rechargeAmount;
 
     private Long status;
     private Date createdAt;
