@@ -112,7 +112,7 @@
                         </div>
                     </div>
                     <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
-                        创建客户
+                        创建账号
                     </button>
 
                     <!--fade 淡入淡出-->
@@ -123,7 +123,7 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="myModallabel">创建客户</h5>
+                                        <h5 class="modal-title" id="myModallabel">创建账号</h5>
                                         <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
                                             &times;
                                         </button>
@@ -133,76 +133,22 @@
                                         <div class="card-body">
 
                                             <div class="form-group row">
-                                                <label for="corpName-i" class="col-sm-3 col-form-label">客户名：</label>
+                                                <label for="accountId-i" class="col-sm-3 col-form-label">账户ID：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="corpName-i" placeholder="请输入..."
+                                                    <input type="text" value="" id="accountId-i" placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="corpSubject-i"
-                                                       class="col-sm-3 col-form-label">签约主体：</label>
+                                                <label for="platform-i"
+                                                       class="col-sm-3 col-form-label">平台：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="corpSubject-i"
+                                                    <input type="text" value="" id="platform-i"
                                                            placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="cooperationMode-i"
-                                                       class="col-sm-3 col-form-label">合作模式：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="cooperationMode-i"
-                                                           placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="settlement-i"
-                                                       class="col-sm-3 col-form-label">结算方式：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="settlement-i"
-                                                           placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="currency-i"
-                                                       class="col-sm-3 col-form-label">结算币种：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="currency-i" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="rebate-i" class="col-sm-3 col-form-label">返点：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="number" id="rebate-i" placeholder="请输入..."
-                                                           class="form-control" value="">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="serviceFee-i"
-                                                       class="col-sm-3 col-form-label">服务费：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="number" id="serviceFee-i" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="remarks-i" class="col-sm-3 col-form-label">备注：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="remarks-i" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="source-i" class="col-sm-3 col-form-label">来源：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="source-i" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
+
                                         </div>
                                     </div>
 
@@ -210,7 +156,7 @@
                                         <button class="btn btn-default" type="button" data-dismiss="modal">关闭
                                         </button>
                                         <button class="btn btn-success" type="button"
-                                                onclick="onCreateUser()">确认
+                                                onclick="onCreateCustomerAccount()">确认
                                         </button>
                                     </div>
 
@@ -286,6 +232,8 @@
         });
     });
     var select_key = "0"
+    var customerIdC = "0"
+
     var vue = new Vue({
         el: '#app',
         data: {
@@ -296,9 +244,14 @@
             accountRechargeAmount: "加载中...",
             actorBtn: "全部",
             select_map: {"0": "全部", "1": "已审批", "2": "待审批"},
-
+            customerId: ""
         },
         created() {
+
+            let uri = window.location.search.substring(1);
+            let params = new URLSearchParams(uri);
+            this.$data.customerId = params.get("customerId");
+            customerIdC = params.get("customerId");
             axios.get("/admin/user/deposit_approval/deposit").then((response) => {
                 this.$data.userDeposit = response.data;
             });
@@ -335,7 +288,7 @@
     });
     $('#tb_departments').bootstrapTable({
         classes: 'table table-bordered table-hover table-striped',
-        url: '/customer/list',
+        url: '/customerAccount/list?customerId=' + vue.$data.customerId,
         method: 'get',
         dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
         uniqueId: 'id',
@@ -374,8 +327,16 @@
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'corpName',
-            title: '客户名称',
+            field: 'accountName',
+            title: '账户名称',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'accountId',
+            title: '账户ID',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
@@ -390,79 +351,42 @@
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'todo1',
-            title: '账单余额',
+            field: 'budgetLimit',
+            title: '预算总额',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'settlement',
-            title: '结算方式',
+            field: 'todo',
+            title: '剩余预算',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'rebate',
-            title: '返点',
+            field: 'todo',
+            title: '充值总额',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'serviceFee',
-            title: '服务费',
+            field: 'costAmount',
+            title: '花费总额',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'corpSubject',
-            title: '客户主体',
+            field: 'platform',
+            title: '平台',
             align: 'center',
             valign: 'middle',
-            visible: false,
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
-        }, {
-            field: 'cooperationMode',
-            title: '合作模式',
-            align: 'center',
-            valign: 'middle',
-            visible: false,
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
-        }, {
-            field: 'currency',
-            title: '币种',
-            align: 'center',
-            valign: 'middle',
-            visible: false,
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
-        }, {
-            field: 'remarks',
-            title: '备注',
-            align: 'center',
-            valign: 'middle',
-            visible: false,
-            formatter: function (row) {
-                return row == null ? "未知" : row;
-            }
-        }, {
-            field: 'source',
-            title: '来源',
-            align: 'center',
-            valign: 'middle',
-            visible: false,
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
@@ -472,22 +396,12 @@
             align: 'center',
             valign: 'middle',
             formatter: function (value, row, index) {
-                return toApprovalBtnGroup(row, index);
-            },
-            events: {
-                'click #customer-info': function (event, value, row, index) {
-                    parent.$(parent.document).data('multitabs').create({
-                        iframe: true,
-                        title: row.corpName + " 账户列表",
-                        url: 'customerAccount.html?customerId=' + row.id,
-                    }, true);
-                },
-                'click #payment-info': function (event, value, row, index) {
-                    parent.$(parent.document).data('multitabs').create({
-                        iframe: true,
-                        title: row.corpName + " 付款记录",
-                        url: 'customerPayment.html?customerId=' + row.id,
-                    }, true);
+                if (row.status === 0) {
+                    return toApprovalBtnGroup(row, index);
+                } else if (row.status === 1) {
+                    return "<button class=\'btn btn-secondary \' >已通过</button>"
+                } else if (row.status === 2) {
+                    return "<button class=\'btn btn-secondary \' >已拒绝</button>"
                 }
             }
         }
@@ -499,8 +413,7 @@
 
     // 操作按钮
     function toApprovalBtnGroup(row, index) {
-        return '<button id="customer-info" class=\'btn btn-primary \' >账户列表</button>  ' +
-            ' <button id="payment-info" class=\'btn btn-primary \' >付款记录</button>  ' +
+        return '<button class=\'btn btn-danger \' onclick="onRefuse(' + row.id + ',' + row.deposit + ')" >拒绝</button> ' +
             ' <button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >通过</button>' +
             '                    <!--fade 淡入淡出-->\n' +
             '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
@@ -576,21 +489,15 @@
         }
     }
 
-    function onCreateUser() {
-        $.post("/customer", {
-            "corpName": $("#corpName-i").val(),
-            "corpSubject": $("#corpSubject-i").val(),
-            "cooperationMode": $("#cooperationMode-i").val(),
-            "settlement": $("#settlement-i").val(),
-            "currency": $("#currency-i").val(),
-            "serviceFee": $("#serviceFee-i").val(),
-            "remarks": $("#remarks-i").val(),
-            "source": $("#source-i").val(),
-            "rebate": $("#rebate-i").val()
+    function onCreateCustomerAccount() {
+        $.post("/customerAccount", {
+            "accountId": $("#accountId-i").val(),
+            "platform": $("#platform-i").val(),
+            "customerId": customerIdC,
         }, function (data, status) {
             $('#myModal').modal("hide");
             $('#tb_departments').bootstrapTable('refresh', {
-                url: '/customer/list'
+                url: '/customerAccount/list?customerId=' + customerIdC
             });
         });
     }

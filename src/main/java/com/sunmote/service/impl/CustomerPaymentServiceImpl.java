@@ -35,6 +35,6 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
         }
 
         Page<CustomerPayment> result = dao.selectPage(new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()), wrapper);
-        return new PageResult<>(result.getTotal(), result.getRecords());
+        return new PageResult<>(Long.valueOf(dao.selectCount(wrapper)), result.getRecords());
     }
 }
