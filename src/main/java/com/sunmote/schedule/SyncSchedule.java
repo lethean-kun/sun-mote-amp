@@ -1,10 +1,12 @@
 package com.sunmote.schedule;
 
 import com.facebook.ads.sdk.*;
+import com.sunmote.common.config.FacebookApiConfig;
 import com.sunmote.domain.AccountBill;
 import com.sunmote.domain.CustomerAccount;
 import com.sunmote.service.AccountBillService;
 import com.sunmote.service.CustomerAccountService;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,68 +24,75 @@ public class SyncSchedule {
 
     final CustomerAccountService customerAccountService;
     final AccountBillService accountBillService;
+    final FacebookApiConfig facebookApiConfig;
 
-    public SyncSchedule(CustomerAccountService customerAccountService, AccountBillService accountBillService) {
+    public SyncSchedule(CustomerAccountService customerAccountService, AccountBillService accountBillService, FacebookApiConfig env) {
         this.customerAccountService = customerAccountService;
         this.accountBillService = accountBillService;
+        this.facebookApiConfig = env;
     }
 
 
-    @Scheduled(fixedRate = 600000)
+//    @Scheduled(fixedRate = 600000)
     public void syncAccountBill() {
-        APIContext context = new APIContext("");
-        User user = new User("", context);
-        User.APIRequestGetAdAccounts adAccountsExecute = user.getAdAccounts()
-                .requestSpendCapField()
-                .requestAccountIdField()
-                .requestNameField()
-                .requestAmountSpentField()
-                .requestCurrencyField();
+        for (FacebookApiConfig.FacebookUser u : facebookApiConfig.getUsers()) {
+            APIContext context = new APIContext(u.getAccessToken(), u.getAppSecret(), u.getAppId());
 
-        try {
-            // TODO 分页
-            APINodeList<AdAccount> adAccounts = adAccountsExecute.execute();
-            for (AdAccount adAccount : adAccounts) {
-                AdAccount.APIRequestGetInsights insights = adAccount.getInsights().setDatePreset("maximum").requestField("spend");
-                APINodeList<AdsInsights> adsInsights = insights.execute();
-                double costAmount = 0;
-                for (AdsInsights adsInsight : adsInsights) {
-                    costAmount += Double.parseDouble(adsInsight.getFieldSpend());
+            User user = new User(u.getUserId(), context);
+            User.APIRequestGetAdAccounts adAccountsExecute = user.getAdAccounts()
+                    .requestSpendCapField()
+                    .requestAccountIdField()
+                    .requestNameField()
+                    .requestAmountSpentField()
+                    .requestCurrencyField();
+
+            try {
+                // TODO 分页
+                APINodeList<AdAccount> adAccounts = adAccountsExecute.execute();
+                for (AdAccount adAccount : adAccounts) {
+                    AdAccount.APIRequestGetInsights insights = adAccount.getInsights().setDatePreset("maximum").requestField("spend");
+                    APINodeList<AdsInsights> adsInsights = insights.execute();
+                    double costAmount = 0;
+                    for (AdsInsights adsInsight : adsInsights) {
+                        costAmount += Double.parseDouble(adsInsight.getFieldSpend());
+                    }
+                    CustomerAccount customerAccount = CustomerAccount.builder()
+                            .accountId(adAccount.getFieldAccountId())
+                            .accountName(adAccount.getFieldName())
+                            .costAmount(costAmount)
+                            .budgetLimit(Double.parseDouble(adAccount.getFieldSpendCap()) / 100)
+                            .remainingAmount((Double.parseDouble(adAccount.getFieldSpendCap()) - Double.parseDouble(adAccount.getFieldAmountSpent())) / 100)
+                            .platform(CustomerAccount.Platform.Facebook.name())
+                            .currency(adAccount.getFieldCurrency())
+                            .build();
+
+                    customerAccountService.upsert(adAccount.getFieldAccountId(), customerAccount);
+
+                    // 每日流水
+                    AdAccount.APIRequestGetInsights todayInsightsApi = adAccount.getInsights()
+                            .setDatePreset(AdsInsights.EnumDatePreset.VALUE_TODAY).requestField("spend");
+                    APINodeList<AdsInsights> todayInsights = todayInsightsApi.execute();
+                    double todayCost = 0;
+                    LocalDate today = LocalDate.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String date = today.format(formatter);
+                    for (AdsInsights todayInsight : todayInsights) {
+                        todayCost += Double.parseDouble(todayInsight.getFieldSpend());
+                    }
+                    accountBillService.upsert(
+                            date,
+                            AccountBill.builder().date(date).accountId(adAccount.getFieldAccountId()).amount(todayCost)
+                                    .platform(CustomerAccount.Platform.Facebook.name()).build()
+                    );
+
                 }
-                CustomerAccount customerAccount = CustomerAccount.builder()
-                        .accountId(adAccount.getFieldAccountId())
-                        .accountName(adAccount.getFieldName())
-                        .costAmount(costAmount)
-                        .budgetLimit(Double.parseDouble(adAccount.getFieldSpendCap()) / 100)
-                        .remainingAmount((Double.parseDouble(adAccount.getFieldSpendCap()) - Double.parseDouble(adAccount.getFieldAmountSpent())) / 100)
-                        .platform(CustomerAccount.Platform.Facebook)
-                        .currency(adAccount.getFieldCurrency())
-                        .build();
 
-                customerAccountService.upsert(adAccount.getFieldAccountId(), customerAccount);
-
-                // 每日流水
-                AdAccount.APIRequestGetInsights todayInsightsApi = adAccount.getInsights()
-                        .setDatePreset(AdsInsights.EnumDatePreset.VALUE_TODAY).requestField("spend");
-                APINodeList<AdsInsights> todayInsights = todayInsightsApi.execute();
-                double todayCost = 0;
-                LocalDate today = LocalDate.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String date = today.format(formatter);
-                for (AdsInsights todayInsight : todayInsights) {
-                    todayCost += Double.parseDouble(todayInsight.getFieldSpend());
-                }
-                accountBillService.upsert(
-                        date,
-                        AccountBill.builder().date(date).amount(todayCost).platform(CustomerAccount.Platform.Facebook.name()).build()
-                );
-
+            } catch (APIException e) {
+                // TODO log
+                e.printStackTrace();
             }
-
-        } catch (APIException e) {
-            // TODO log
-            e.printStackTrace();
         }
+
     }
 
 }

@@ -34,6 +34,7 @@ public class AccountBillServiceImpl implements AccountBillService {
 
         QueryWrapper<AccountBill> caWrapper = new QueryWrapper<>();
         caWrapper.eq("date", date);
+        caWrapper.eq("accountId", accountBill.getAccountId());
         List<AccountBill> accountBills = accountBillDAO.selectList(caWrapper);
 
         if (accountBills.size() < 1) {

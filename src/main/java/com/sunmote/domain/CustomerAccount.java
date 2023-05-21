@@ -1,6 +1,7 @@
 package com.sunmote.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class CustomerAccount {
     private Long customerId;
     private String accountId;
     private String accountName;
-    private Platform platform;
+    private String platform;
     // 预算总额
     private double budgetLimit;
     // 剩余预算
@@ -34,6 +35,14 @@ public class CustomerAccount {
     private Long status;
     private Date createdAt;
     private Date updatedAt;
+
+    // 广告花费
+    @TableField(exist = false)
+    private double adCost;
+
+    // 充值总额
+    @TableField(exist = false)
+    private double accountRechargeAmount;
 
     public enum Platform {
         Facebook,

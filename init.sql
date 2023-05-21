@@ -101,5 +101,5 @@ CREATE TABLE sunmote.AccountRecharge
     isDelete       TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
     createdAt      DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
     updatedAt      DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) COMMENT '账户充值申请';
+) COMMENT '账户充值';
 

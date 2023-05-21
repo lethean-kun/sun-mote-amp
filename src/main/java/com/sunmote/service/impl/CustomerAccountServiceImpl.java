@@ -4,19 +4,34 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sunmote.common.model.PageResult;
 import com.sunmote.common.model.QueryPageBean;
+import com.sunmote.dao.AccountBillDAO;
+import com.sunmote.dao.AccountRechargeDAO;
 import com.sunmote.dao.CustomerAccountDAO;
+import com.sunmote.domain.AccountBill;
+import com.sunmote.domain.AccountRecharge;
 import com.sunmote.domain.CustomerAccount;
-import com.sunmote.domain.CustomerPayment;
 import com.sunmote.service.CustomerAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sunmote.util.DateUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerAccountServiceImpl implements CustomerAccountService {
-    @Autowired
-    CustomerAccountDAO dao;
+
+    final CustomerAccountDAO dao;
+
+    final AccountBillDAO accountBillDAO;
+    final AccountRechargeDAO accountRechargeDAO;
+
+    public CustomerAccountServiceImpl(AccountBillDAO accountBillDAO, CustomerAccountDAO dao, AccountRechargeDAO accountRechargeDAO) {
+        this.accountBillDAO = accountBillDAO;
+        this.dao = dao;
+        this.accountRechargeDAO = accountRechargeDAO;
+    }
+
 
     @Override
     public void create(final CustomerAccount customer) {
@@ -52,6 +67,38 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         }
 
         Page<CustomerAccount> result = dao.selectPage(new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()), wrapper);
-        return new PageResult<>(Long.valueOf(dao.selectCount(wrapper)), result.getRecords());
+        result.getRecords().forEach(
+                customerAccount -> {
+                    QueryWrapper<AccountBill> abWrapper = new QueryWrapper<>();
+                    abWrapper.eq("accountId", customerAccount.getAccountId());
+                    if (queryPageBean.getStart() != null) {
+                        abWrapper.ge("date", DateUtil.fmtData(queryPageBean.getStart()));
+                    }
+                    if (queryPageBean.getEnd() != null) {
+                        abWrapper.le("date", DateUtil.fmtData(queryPageBean.getEnd()));
+                    }
+                    double adCost = 0;
+                    List<AccountBill> abList = accountBillDAO.selectList(abWrapper);
+                    for (AccountBill ab : abList) {
+                        adCost += ab.getAmount();
+                    }
+                    customerAccount.setAdCost(adCost);
+
+                    QueryWrapper<AccountRecharge> arWrapper = new QueryWrapper<>();
+                    arWrapper.eq("accountId", customerAccount.getId());
+
+                    List<AccountRecharge> accountRecharges = accountRechargeDAO.selectList(arWrapper);
+                    double accountRechargeAmount = 0;
+                    for (AccountRecharge accountRecharge : accountRecharges) {
+                        accountRechargeAmount += accountRecharge.getRechargeAmount();
+                    }
+                    customerAccount.setAccountRechargeAmount(accountRechargeAmount);
+
+                }
+        );
+
+        List<CustomerAccount> r = result.getRecords().stream().
+                sorted(Comparator.comparing(CustomerAccount::getAdCost).reversed()).collect(Collectors.toList());
+        return new PageResult<>(Long.valueOf(dao.selectCount(wrapper)), r);
     }
 }
