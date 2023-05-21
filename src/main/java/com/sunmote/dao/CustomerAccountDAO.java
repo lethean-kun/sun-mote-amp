@@ -5,9 +5,11 @@ import com.sunmote.common.model.QueryPageBean;
 import com.sunmote.domain.CustomerAccount;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface CustomerAccountDAO extends BaseMapper<CustomerAccount> {
 
     @Select("select count(1) from CustomerAccount")

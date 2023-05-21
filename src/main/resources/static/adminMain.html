@@ -92,22 +92,12 @@
                     <div class="btn-group">
                         <div class="input-group mt-4">
                             <!--                        <div class="card-title">所有用户-3</div>-->
-                            <div class="card-title" style="width: 205px">
+                            <div class="card-title" style="width: 210px">
                                 <input type="text" class="form-control" name="daterange"/>
                             </div>
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                {{actorBtn}}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
-                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :
-                                    value}}
-                                </button>
-                            </div>
                             <label>
-                                <input type="text" class="form-control" value="搜索"/>
+                                <input type="text" class="form-control" id="keywords" @keyup.enter="onSearchCustomer()"
+                                       placeholder="搜索"/>
                             </label>
                         </div>
                     </div>
@@ -152,26 +142,39 @@
                                                 <label for="cooperationMode-i"
                                                        class="col-sm-3 col-form-label">合作模式：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="cooperationMode-i"
-                                                           placeholder="请输入..."
-                                                           class="form-control">
+                                                    <select class="custom-select form-control" id="cooperationMode-i">
+                                                        <option selected>请选择...</option>
+                                                        <option value="自投">自投</option>
+                                                        <option value="代投">代投</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="settlement-i"
                                                        class="col-sm-3 col-form-label">结算方式：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="settlement-i"
-                                                           placeholder="请输入..."
-                                                           class="form-control">
+                                                    <select class="custom-select form-control" id="settlement-i">
+                                                        <option selected>请选择...</option>
+                                                        <option value="自投">预付(按充值)</option>
+                                                        <option value="代投">预付(按消耗)</option>
+                                                        <option value="代投">后付周结</option>
+                                                        <option value="代投">后付月结</option>
+                                                        <option value="代投">后付账期</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="currency-i"
                                                        class="col-sm-3 col-form-label">结算币种：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="currency-i" placeholder="请输入..."
-                                                           class="form-control">
+                                                    <select class="custom-select form-control" id="currency-i">
+                                                        <option selected>请选择...</option>
+                                                        <option value="自投">美金</option>
+                                                        <option value="代投">人民币</option>
+                                                        <option value="代投">USDT</option>
+                                                        <option value="代投">奈拉</option>
+                                                        <option value="代投">比索</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -331,6 +334,11 @@
                     });
                 }
             },
+            onSearchCustomer() {
+                $('#tb_departments').bootstrapTable('refresh', {
+                    url: '/customer/list?keywords=' + $('#keywords').val()
+                });
+            }
         }
     });
     $('#tb_departments').bootstrapTable({
@@ -361,7 +369,7 @@
         },                                   // 传递参数
         sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
         pageNumber: 1,                       // 初始化加载第一页，默认第一页
-        pageSize: 10,                        // 每页的记录行数
+        pageSize: 10000,                        // 每页的记录行数
         pageList: [10, 50, 100, 300],         // 可供选择的每页的行数
 
         columns: [{
@@ -382,20 +390,20 @@
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'todo',
+            field: 'adCost',
             title: '广告花费',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "0" : row;
             }
         }, {
-            field: 'todo1',
+            field: 'customerBalance',
             title: '账单余额',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "0" : row;
             }
         }, {
             field: 'settlement',
@@ -411,7 +419,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row + "%";
             }
         }, {
             field: 'serviceFee',
@@ -419,7 +427,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row + "%";
             }
         }, {
             field: 'corpSubject',
@@ -501,79 +509,7 @@
     function toApprovalBtnGroup(row, index) {
         return '<button id="customer-info" class=\'btn btn-primary \' >账户列表</button>  ' +
             ' <button id="payment-info" class=\'btn btn-primary \' >付款记录</button>  ' +
-            ' <button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >通过</button>' +
-            '                    <!--fade 淡入淡出-->\n' +
-            '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
-            '                         tabindex="-1">\n' +
-            '                        <div class="modal-dialog">\n' +
-            '                            <div class="modal-content">\n' +
-            '                                <div class="modal-header">\n' +
-            '                                    <h5 class="modal-title" id="myModallabel' + index + '">通过申请</h5>\n' +
-            '                                    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">\n' +
-            '                                        &times;\n' +
-            '                                    </button>\n' +
-            '                                </div>\n' +
-            '                                    <div class="modal-body">\n' +
-            '                                        <div class="form-group row">\n' +
-            '                                           <label class="col-sm-3 col-form-label">用户名：</label>\n' +
-            '                                           <div class="col-sm-8">\n' +
-            '                                                <input style="margin-right: 10%" type="text" readonly="readonly" value="' + row.username + '" name="username"\n' +
-            '                                                       placeholder="username"  class="form-control">\n' +
-            '                                           </div>\n' +
-            '                                        </div>\n' +
-            '                                        <div class="form-group row">\n' +
-            '                                           <label class="col-sm-3 col-form-label">金额：</label>\n' +
-            '                                           <div class="col-sm-8">\n' +
-            '                                                <input style="margin-right: 10%" type="number" id = "deposit' + row.id + '" value="' + row.deposit + '" name="deposit"\n' +
-            '                                                       placeholder="deposit" class="form-control">\n' +
-            '                                           </div>\n' +
-            '                                        </div>\n' +
-            '                                    </div>\n' +
-            '                                    <div class="modal-footer">\n' +
-            '                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭\n' +
-            '                                        </button>\n' +
-            '                                        <button class="btn btn-success"  type="button" onclick="onAssent(' + row.id + ',$(\'#deposit' + row.id + '\').val())">通过</button>\n' +
-            '                                    </div>\n' +
-            '                            </div>\n' +
-            '                        </div>\n' +
-            '                    </div> ';
-    }
-
-    function onRefuse(id, deposit) {
-        $.post("/admin/user/deposit_approval/" + id + "/refuse", {
-            "deposit": deposit,
-            "status": 2
-        }, function (data, status) {
-            refreshNow()
-        });
-    }
-
-    function onAssent(id, deposit) {
-        console.log(deposit)
-        $.post("/admin/user/deposit_approval/" + id + "/assent", {
-            "deposit": deposit,
-            "status": 1
-        }, function (data, status) {
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open');
-            refreshNow()
-        });
-    }
-
-    function refreshNow() {
-        if (select_key === "0") { // 全部
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval'
-            });
-        } else if (select_key === "1") { // 已审批
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval?status=1&status=2'
-            });
-        } else if (select_key === "2") { // 未审批
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval?status=0'
-            });
-        }
+            ' <button id="customer-edit" class=\'btn btn-primary \' disabled="true">编辑</button>  ';
     }
 
     function onCreateUser() {

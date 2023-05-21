@@ -21,9 +21,9 @@ public class CustomerAccount {
     private String accountName;
     private String platform;
     // 预算总额
-    private String budgetLimit;
+    private double budgetLimit;
     // 花费总额
-    private String costAmount;
+    private double costAmount;
     // 币种
     private String currency;
 

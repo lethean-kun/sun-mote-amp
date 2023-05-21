@@ -1,5 +1,6 @@
 package com.sunmote.common.model;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +16,8 @@ public class QueryPageBean implements Serializable {
     private String sortOrder;
     private String sort;
     private Integer offset;
-    private String start;
-    private String end;
+    private Long start;
+    private Long end;
 
     public QueryPageBean(Integer page, Integer limit, String sort, Integer offset) {
         this.page = page;

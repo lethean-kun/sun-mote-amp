@@ -46,8 +46,8 @@ CREATE TABLE sunmote.CustomerAccount (
     accountName VARCHAR(255)                       NULL COMMENT '账号名',
     accountId   VARCHAR(255)                       NOT NULL COMMENT '账号id',
 
-    budgetLimit VARCHAR(255)                       NULL COMMENT '预算总额',
-    costAmount  VARCHAR(255)                       NULL COMMENT '花费总额',
+    budgetLimit DOUBLE                             NULL COMMENT '预算总额',
+    costAmount  DOUBLE                             NULL COMMENT '花费总额',
     platform    VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
     currency    VARCHAR(32)                        NULL COMMENT '美金/人民币/USDT/奈拉/比索',
 
@@ -61,7 +61,7 @@ CREATE TABLE sunmote.AccountBill (
     id        BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     accountId VARCHAR(255)                       NOT NULL COMMENT '账号id',
     platform  VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
-    amount    VARCHAR(64)                        NOT NULL COMMENT '消费额',
+    amount    DOUBLE                             NOT NULL COMMENT '消费额',
     date      VARCHAR(64)                        NOT NULL COMMENT '日期 格式 YYYY-MM-DD',
 
     status    TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
@@ -73,7 +73,7 @@ CREATE TABLE sunmote.AccountBill (
 CREATE TABLE sunmote.CustomerPayment (
     id         BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
-    amount     VARCHAR(64)                        NULL COMMENT '付款金额',
+    amount     DOUBLE                             NULL COMMENT '付款金额',
     customerId BIGINT UNSIGNED                    NOT NULL COMMENT '客户ID',
     remark     VARCHAR(255)                       NULL COMMENT '邮箱',
 

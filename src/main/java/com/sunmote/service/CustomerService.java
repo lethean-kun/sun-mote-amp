@@ -10,6 +10,6 @@ public interface CustomerService {
 
     void update(Long id, Customer customer);
 
-    PageResult<Customer> readList(QueryPageBean queryPageBean);
+    PageResult<Customer> readList(String keywords, QueryPageBean queryPageBean);
 
 }

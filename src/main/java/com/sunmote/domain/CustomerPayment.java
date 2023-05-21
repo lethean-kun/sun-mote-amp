@@ -19,7 +19,7 @@ public class CustomerPayment {
     private String customerId;
     private String remark;
     // 充值额
-    private String amount;
+    private double amount;
 
 
     private Long status;

@@ -19,7 +19,7 @@ public class AccountBill {
     private String accountId;
     private String platform;
     // 花费额
-    private String amount;
+    private double amount;
     // 日期 格式 YYYY-MM-DD
     private String date;
 
