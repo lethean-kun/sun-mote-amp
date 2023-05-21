@@ -31,8 +31,8 @@ public class SyncSchedule {
 
     @Scheduled(fixedRate = 600000)
     public void syncAccountBill() {
-        APIContext context = new APIContext("EAAUOWMLPchgBACZCBxJiN1EJWJviIP4lU3RDlACp3O4fdsZAWDOg1Y5ZCQwM9RfMNDoOmpPaJVCFeXEk75HD2WYP5jZAuJawCQEY4wrrEWUzgt9EeipOwbWAFFfmx5dq4oWwas5SBcg1l8ZAEnUt2qsZA83xKZC8I0Bbc7XJqWfTfgJRDE3t9FgZCoAmxZCHVA4IZD");
-        User user = new User("100092998956741", context);
+        APIContext context = new APIContext("");
+        User user = new User("", context);
         User.APIRequestGetAdAccounts adAccountsExecute = user.getAdAccounts()
                 .requestSpendCapField()
                 .requestAccountIdField()

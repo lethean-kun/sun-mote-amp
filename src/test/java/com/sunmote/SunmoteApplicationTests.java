@@ -14,11 +14,11 @@ class SunmoteApplicationTests {
     @Test
     void contextLoads() {
 
-        APIContext context = new APIContext("EAAUOWMLPchgBACZCBxJiN1EJWJviIP4lU3RDlACp3O4fdsZAWDOg1Y5ZCQwM9RfMNDoOmpPaJVCFeXEk75HD2WYP5jZAuJawCQEY4wrrEWUzgt9EeipOwbWAFFfmx5dq4oWwas5SBcg1l8ZAEnUt2qsZA83xKZC8I0Bbc7XJqWfTfgJRDE3t9FgZCoAmxZCHVA4IZD",
-                "446daa35b61d5c4f88b2a6a44739ce82", "1423149271839256");
+        APIContext context = new APIContext("",
+                "", "");
 //        context.enableDebug(true);
 
-        User user = new User("104304742679491", context);
+        User user = new User("", context);
         User.APIRequestGetAdAccounts adAccountsExecute = user.getAdAccounts().requestSpendCapField();
 
         try {
