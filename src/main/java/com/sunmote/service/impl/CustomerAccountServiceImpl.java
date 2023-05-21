@@ -11,6 +11,8 @@ import com.sunmote.service.CustomerAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerAccountServiceImpl implements CustomerAccountService {
     @Autowired
@@ -25,6 +27,20 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     public void update(final Long id, final CustomerAccount customer) {
         customer.setId(id);
         dao.updateById(customer);
+    }
+
+    @Override
+    public void upsert(String accountId, CustomerAccount customerAccount) {
+
+        QueryWrapper<CustomerAccount> caWrapper = new QueryWrapper<>();
+        caWrapper.eq("accountId", accountId);
+        List<CustomerAccount> customerAccountList = dao.selectList(caWrapper);
+        if (customerAccountList.size() < 1) {
+            dao.insert(customerAccount);
+        } else {
+            customerAccount.setId(customerAccountList.get(0).getId());
+            dao.updateById(customerAccount);
+        }
     }
 
     @Override

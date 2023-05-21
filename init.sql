@@ -1,7 +1,8 @@
 CREATE
     DATABASE sunmote;
 
-CREATE TABLE User (
+CREATE TABLE User
+(
     id         BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
     customerId BIGINT UNSIGNED                       NULL COMMENT '所属客户',
@@ -19,7 +20,8 @@ INSERT INTO sunmote.User (username, password, status, isDelete, role)
     VALUE ('admin', '$2a$10$m4Zpfj/pWDfqV4sBqs6f0O9mTGwOnVhkIDk90u2vieHjxGzxXNZii', 0, 0, 'ADMIN');
 
 
-CREATE TABLE Customer (
+CREATE TABLE Customer
+(
     id              BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
     corpName        VARCHAR(64)                           NULL,
@@ -40,24 +42,27 @@ CREATE TABLE Customer (
     COMMENT '客户表';
 
 
-CREATE TABLE sunmote.CustomerAccount (
-    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    customerId  BIGINT UNSIGNED                    NULL COMMENT '客户ID',
-    accountName VARCHAR(255)                       NULL COMMENT '账号名',
-    accountId   VARCHAR(255)                       NOT NULL COMMENT '账号id',
+CREATE TABLE sunmote.CustomerAccount
+(
+    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    customerId      BIGINT UNSIGNED                    NULL COMMENT '客户ID',
+    accountName     VARCHAR(255)                       NULL COMMENT '账号名',
+    accountId       VARCHAR(255)                       NOT NULL COMMENT '账号id',
 
-    budgetLimit DOUBLE                             NULL COMMENT '预算总额',
-    costAmount  DOUBLE                             NULL COMMENT '花费总额',
-    platform    VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
-    currency    VARCHAR(32)                        NULL COMMENT '美金/人民币/USDT/奈拉/比索',
+    budgetLimit     DOUBLE                             NULL COMMENT '预算总额',
+    remainingAmount DOUBLE                             NULL COMMENT '剩余预算',
+    costAmount      DOUBLE                             NULL COMMENT '花费总额',
+    platform        VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
+    currency        VARCHAR(32)                        NULL COMMENT '美金/人民币/USDT/奈拉/比索',
 
-    status      TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
-    isDelete    TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
-    createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
-    updatedAt   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+    status          TINYINT  DEFAULT 0                 NOT NULL COMMENT '状态',
+    isDelete        TINYINT  DEFAULT 0                 NOT NULL COMMENT '是否已删除',
+    createdAt       DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    updatedAt       DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT '用户拥有的账号表';
 
-CREATE TABLE sunmote.AccountBill (
+CREATE TABLE sunmote.AccountBill
+(
     id        BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     accountId VARCHAR(255)                       NOT NULL COMMENT '账号id',
     platform  VARCHAR(64)                        NOT NULL COMMENT '账号所属平台: Google、Facebook、Twitter...',
@@ -70,7 +75,8 @@ CREATE TABLE sunmote.AccountBill (
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT '用户账户账单表';
 
-CREATE TABLE sunmote.CustomerPayment (
+CREATE TABLE sunmote.CustomerPayment
+(
     id         BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
     amount     DOUBLE                             NULL COMMENT '付款金额',
@@ -84,7 +90,8 @@ CREATE TABLE sunmote.CustomerPayment (
 ) COMMENT '客户付款';
 
 
-CREATE TABLE sunmote.AccountRecharge (
+CREATE TABLE sunmote.AccountRecharge
+(
     id             BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
     accountId      VARCHAR(32)                        NOT NULL COMMENT '账户ID',

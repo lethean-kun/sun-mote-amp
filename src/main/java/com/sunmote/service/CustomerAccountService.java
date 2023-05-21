@@ -10,6 +10,8 @@ public interface CustomerAccountService {
 
     void update(Long id, CustomerAccount customerAccount);
 
+    void upsert(String accountId, CustomerAccount customerAccount);
+
     PageResult<CustomerAccount> readList(Long customerId, QueryPageBean queryPageBean);
 
 }
