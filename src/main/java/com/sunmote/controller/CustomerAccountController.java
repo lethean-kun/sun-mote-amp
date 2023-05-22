@@ -22,7 +22,7 @@ public class CustomerAccountController {
     final CustomerAccountService customerAccountService;
 
     public CustomerAccountController(
-            final CustomerAccountService customerAccountService
+        final CustomerAccountService customerAccountService
     ) {
 
         this.customerAccountService = customerAccountService;
@@ -31,16 +31,25 @@ public class CustomerAccountController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('ADMIN')")
     public PageResult<CustomerAccount> readUser(
-            @RequestParam(required = false) Long customerId,
-            QueryPageBean queryPageBean
+        @RequestParam(required = false) Long customerId,
+        QueryPageBean queryPageBean
     ) {
         return customerAccountService.readList(customerId, queryPageBean);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void createCustomer(CustomerAccount customer) {
+    public void createCustomerAccount(CustomerAccount customer) {
         customerAccountService.create(customer);
+    }
+
+    @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void updateCustomerAccount(
+        @PathVariable(value = "id") Long id,
+        CustomerAccount customer
+    ) {
+        customerAccountService.update(id, customer);
     }
 
     // 获取当前登录的用户

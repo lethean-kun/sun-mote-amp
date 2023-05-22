@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
@@ -91,96 +91,14 @@
 
                     <div class="btn-group">
                         <div class="input-group mt-4">
-                            <!--                        <div class="card-title">所有用户-3</div>-->
                             <div class="card-title" style="width: 210px">
                                 <input type="text" class="form-control" name="daterange"/>
-                            </div>
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                {{actorBtn}}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
-                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :
-                                    value}}
-                                </button>
-                            </div>
-                            <label>
-                                <input type="text" class="form-control" value="搜索"/>
-                            </label>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
-                        客户付款
-                    </button>
-
-                    <!--fade 淡入淡出-->
-                    <div class="modal fade" id="myModal" aria-labelledby="myModallabel" aria-hidden="true"
-                         tabindex="-1">
-                        <div class="modal-dialog modal-lg" role="document">
-
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="myModallabel">客户付款</h5>
-                                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">
-                                            &times;
-                                        </button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <div class="card-body">
-
-                                            <div class="form-group row">
-                                                <label for="amount-i" class="col-sm-3 col-form-label">付款金额：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="amount-i" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="remark-i"
-                                                       class="col-sm-3 col-form-label">备注：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="remark-i"
-                                                           placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭
-                                        </button>
-                                        <button class="btn btn-success" type="button"
-                                                onclick="onCreateCustomerPayment()">确认
-                                        </button>
-                                    </div>
-
-                                </div>
                             </div>
                         </div>
                     </div>
                 </header>
 
                 <div class="card-body">
-                    <!--                    <div class="btn-group">-->
-                    <!--                        <div class="input-group mb-3">-->
-                    <!--                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"-->
-                    <!--                                    data-toggle="dropdown"-->
-                    <!--                                    aria-haspopup="true" aria-expanded="false">-->
-                    <!--                                {{actorBtn}}-->
-                    <!--                            </button>-->
-                    <!--                            <div class="dropdown-menu dropdown-menu-right">-->
-                    <!--                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"-->
-                    <!--                                        v-for="(value, key) in select_map">{{(value==''||value==null) ? key : value}}-->
-                    <!--                                </button>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                     <table id="tb_departments"></table>
                 </div>
             </div>
@@ -226,13 +144,11 @@
             alwaysShowCalendars: true
         }, function (start, end, label) {
             $('#tb_departments').bootstrapTable('refresh', {
-                url: '/customer/list?start=' + start + "&end=" + end
+                url: '/customerAccount/list?start=' + start + "&end=" + end
             });
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
-    var select_key = "0"
-    var customerIdC = "0"
 
     var vue = new Vue({
         el: '#app',
@@ -242,16 +158,8 @@
             userOverage: "加载中...",
             accountCount: "加载中...",
             accountRechargeAmount: "加载中...",
-            actorBtn: "全部",
-            select_map: {"0": "全部", "1": "已审批", "2": "待审批"},
-            customerId: ""
         },
         created() {
-
-            let uri = window.location.search.substring(1);
-            let params = new URLSearchParams(uri);
-            this.$data.customerId = params.get("customerId");
-            customerIdC = params.get("customerId");
             axios.get("/admin/user/deposit_approval/deposit").then((response) => {
                 this.$data.userDeposit = response.data;
             });
@@ -265,30 +173,11 @@
                 this.$data.accountRechargeAmount = response.data;
             });
         },
-        methods: {
-            selectActor: function (key) {
-                select_key = key
-                let value = this.$data.select_map[key];
-                this.$data.actorBtn = (value === "" || value == null) ? key : value;
-                if (key === "0") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval'
-                    });
-                } else if (key === "1") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval?status=1&status=2'
-                    });
-                } else if (key === "2") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval?status=0'
-                    });
-                }
-            },
-        }
+        methods: {}
     });
     $('#tb_departments').bootstrapTable({
         classes: 'table table-bordered table-hover table-striped',
-        url: '/customerPayment/list?customerId=' + vue.$data.customerId,
+        url: '/customerAccount/list',
         method: 'get',
         dataType: 'json',        // 因为本示例中是跨域的调用,所以涉及到ajax都采用jsonp,
         uniqueId: 'id',
@@ -303,14 +192,13 @@
         pagination: true,                    // 是否显示分页
         sortOrder: "desc",                    // 排序方式
         queryParams: function (params) {
-            var temp = {
+            return {
                 limit: params.limit,         // 每页数据量
                 offset: params.offset,       // sql语句起始索引
                 page: (params.offset / params.limit) + 1,
                 sort: params.sort,           // 排序的列名
                 sortOrder: params.order      // 排序方式'asc' 'desc'
             };
-            return temp;
         },                                   // 传递参数
         sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
         pageNumber: 1,                       // 初始化加载第一页，默认第一页
@@ -327,24 +215,72 @@
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'amount',
-            title: '付款金额',
+            field: 'customerName',
+            title: '客户名称',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'createdAt',
-            title: '创建时间',
+            field: 'accountName',
+            title: '账户名称',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
                 return row == null ? "未知" : row;
             }
         }, {
-            field: 'remark',
-            title: '备注',
+            field: 'accountId',
+            title: '账户ID',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'adCost',
+            title: '广告花费',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'budgetLimit',
+            title: '预算总额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'remainingAmount',
+            title: '剩余预算',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'accountRechargeAmount',
+            title: '充值总额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'costAmount',
+            title: '花费总额',
+            align: 'center',
+            valign: 'middle',
+            formatter: function (row) {
+                return row == null ? "未知" : row;
+            }
+        }, {
+            field: 'platform',
+            title: '平台',
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
@@ -356,13 +292,50 @@
             align: 'center',
             valign: 'middle',
             formatter: function (value, row, index) {
-                if (row.status === 0) {
-                    return toApprovalBtnGroup(row, index);
-                } else if (row.status === 1) {
-                    return "<button class=\'btn btn-secondary \' >已通过</button>"
-                } else if (row.status === 2) {
-                    return "<button class=\'btn btn-secondary \' >已拒绝</button>"
+                if (row.customerId === null) {
+                    return '<button id="account-recharge" class=\'btn btn-primary \' >充值详情</button>  ' +
+                        '<button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >修改客户</button>' +
+                        '                    <!--fade 淡入淡出-->\n' +
+                        '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
+                        '                         tabindex="-1">\n' +
+                        '                        <div class="modal-dialog">\n' +
+                        '                            <div class="modal-content">\n' +
+                        '                                <div class="modal-header">\n' +
+                        '                                    <h5 class="modal-title" id="myModallabel' + index + '">修改'+ row.accountName +'的客户</h5>\n' +
+                        '                                    <button class="close" type="button" data-dismiss="modal" aria-hidden="true">\n' +
+                        '                                        &times;\n' +
+                        '                                    </button>\n' +
+                        '                                </div>\n' +
+                        '                                    <div class="modal-body">\n' +
+                        '                                        <div class="form-group row">\n' +
+                        '                                           <label class="col-sm-3 col-form-label">客户ID：</label>\n' +
+                        '                                           <div class="col-sm-8">\n' +
+                        '                                                <input type="number" id = "customerId' + row.id + '" value="" name="customerId"\n' +
+                        '                                                       placeholder="Dashboard界面下ID字段" class="form-control">\n' +
+                        '                                           </div>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                    <div class="modal-footer">\n' +
+                        '                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭\n' +
+                        '                                        </button>\n' +
+                        '                                        <button class="btn btn-success"  type="button" onclick="onUpdate(' + row.id + ',$(\'#customerId' + row.id + '\').val())">修改</button>\n' +
+                        '                                    </div>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div> ';
+                } else {
+                    return '<button id="account-recharge" class=\'btn btn-primary \' >充值详情</button>  ' +
+                        '<button id="account-update" class=\'btn btn-primary \' disabled = "disabled">修改客户</button>  '
                 }
+            },
+            events: {
+                'click #account-recharge': function (event, value, row, index) {
+                    parent.$(parent.document).data('multitabs').create({
+                        iframe: true,
+                        title: row.accountName + " 充值列表",
+                        url: 'accountRecharge.html?accountId=' + row.id,
+                    }, true);
+                },
             }
         }
         ],
@@ -371,57 +344,14 @@
         }
     });
 
-    // 操作按钮
-    function toApprovalBtnGroup(row, index) {
-        return '<button class=\'btn btn-danger \' onclick="onRefuse(' + row.id + ',' + row.deposit + ')" >删除</button> '
-    }
-
-    function onRefuse(id, deposit) {
-        $.post("/admin/user/deposit_approval/" + id + "/refuse", {
-            "deposit": deposit,
-            "status": 2
-        }, function (data, status) {
-            refreshNow()
-        });
-    }
-
-    function onAssent(id, deposit) {
-        console.log(deposit)
-        $.post("/admin/user/deposit_approval/" + id + "/assent", {
-            "deposit": deposit,
-            "status": 1
+    function onUpdate(id, customerId) {
+        $.post("/customerAccount/" + id, {
+            "customerId": customerId
         }, function (data, status) {
             $('.modal-backdrop').remove();
             $('body').removeClass('modal-open');
-            refreshNow()
-        });
-    }
-
-    function refreshNow() {
-        if (select_key === "0") { // 全部
             $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval'
-            });
-        } else if (select_key === "1") { // 已审批
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval?status=1&status=2'
-            });
-        } else if (select_key === "2") { // 未审批
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/admin/user/deposit_approval?status=0'
-            });
-        }
-    }
-
-    function onCreateCustomerPayment() {
-        $.post("/customerPayment", {
-            "amount": $("#amount-i").val(),
-            "remark": $("#remark-i").val(),
-            "customerId": customerIdC,
-        }, function (data, status) {
-            $('#myModal').modal("hide");
-            $('#tb_departments').bootstrapTable('refresh', {
-                url: '/customerPayment/list?customerId=' + customerIdC
+                url: '/customerAccount/list'
             });
         });
     }

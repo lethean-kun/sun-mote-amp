@@ -24,17 +24,21 @@ public class CustomerAccount {
     private String accountName;
     private String platform;
     // 预算总额
-    private double budgetLimit;
+    private Double budgetLimit;
     // 剩余预算
-    private double remainingAmount;
+    private Double remainingAmount;
     // 花费总额
-    private double costAmount;
+    private Double costAmount;
     // 币种
     private String currency;
 
     private Long status;
     private Date createdAt;
     private Date updatedAt;
+
+    // 客户名称
+    @TableField(exist = false)
+    private String customerName;
 
     // 广告花费
     @TableField(exist = false)

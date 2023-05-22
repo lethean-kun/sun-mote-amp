@@ -30,14 +30,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     final CustomerPaymentDAO customerPaymentDAO;
 
-
-    public CustomerServiceImpl(CustomerDAO dao, CustomerAccountDAO customerAccountDAO, AccountBillDAO accountBillDAO, CustomerPaymentDAO customerPaymentDAO) {
+    public CustomerServiceImpl(
+        CustomerDAO dao,
+        CustomerAccountDAO customerAccountDAO,
+        AccountBillDAO accountBillDAO,
+        CustomerPaymentDAO customerPaymentDAO
+    ) {
         this.dao = dao;
         this.customerAccountDAO = customerAccountDAO;
         this.accountBillDAO = accountBillDAO;
         this.customerPaymentDAO = customerPaymentDAO;
     }
-
 
     @Override
     public void create(final Customer customer) {
@@ -64,7 +67,9 @@ public class CustomerServiceImpl implements CustomerService {
             QueryWrapper<CustomerAccount> caWrapper = new QueryWrapper<>();
             caWrapper.eq("customerId", customer.getId());
             List<CustomerAccount> accountList = customerAccountDAO.selectList(caWrapper);
-            List<String> accountIdList = accountList.stream().map(CustomerAccount::getAccountId).collect(Collectors.toList());
+            List<String>
+                accountIdList =
+                accountList.stream().map(CustomerAccount::getAccountId).collect(Collectors.toList());
 
             if (accountIdList.size() < 1) {
                 return;
@@ -93,14 +98,18 @@ public class CustomerServiceImpl implements CustomerService {
                 customerBalance += customerPayment.getAmount();
             }
             for (CustomerAccount customerAccount : accountList) {
-                customerBalance -= customerAccount.getCostAmount();
+                if (customerAccount.getCostAmount() != null) {
+                    customerBalance -= customerAccount.getCostAmount();
+                }
             }
             customer.setCustomerBalance(customerBalance);
 
         });
 
-
-        List<Customer> r = result.getRecords().stream().sorted(Comparator.comparing(Customer::getAdCost).reversed()).collect(Collectors.toList());
+        List<Customer> r = result.getRecords()
+            .stream()
+            .sorted(Comparator.comparing(Customer::getAdCost).reversed())
+            .collect(Collectors.toList());
 
         return new PageResult<>(Long.valueOf(dao.selectCount(wrapper)), r);
     }

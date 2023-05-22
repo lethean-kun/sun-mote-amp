@@ -7,8 +7,10 @@ import com.sunmote.common.model.QueryPageBean;
 import com.sunmote.dao.AccountBillDAO;
 import com.sunmote.dao.AccountRechargeDAO;
 import com.sunmote.dao.CustomerAccountDAO;
+import com.sunmote.dao.CustomerDAO;
 import com.sunmote.domain.AccountBill;
 import com.sunmote.domain.AccountRecharge;
+import com.sunmote.domain.Customer;
 import com.sunmote.domain.CustomerAccount;
 import com.sunmote.service.CustomerAccountService;
 import com.sunmote.util.DateUtil;
@@ -25,13 +27,17 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
     final AccountBillDAO accountBillDAO;
     final AccountRechargeDAO accountRechargeDAO;
+    final CustomerDAO customerDAO;
 
-    public CustomerAccountServiceImpl(AccountBillDAO accountBillDAO, CustomerAccountDAO dao, AccountRechargeDAO accountRechargeDAO) {
+    public CustomerAccountServiceImpl(
+        AccountBillDAO accountBillDAO, CustomerAccountDAO dao, AccountRechargeDAO accountRechargeDAO,
+        final CustomerDAO customerDAO
+    ) {
         this.accountBillDAO = accountBillDAO;
         this.dao = dao;
         this.accountRechargeDAO = accountRechargeDAO;
+        this.customerDAO = customerDAO;
     }
-
 
     @Override
     public void create(final CustomerAccount customer) {
@@ -66,39 +72,50 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
             wrapper.eq("customerId", customerId);
         }
 
-        Page<CustomerAccount> result = dao.selectPage(new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()), wrapper);
+        Page<CustomerAccount> result = dao.selectPage(
+            new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()),
+            wrapper
+        );
         result.getRecords().forEach(
-                customerAccount -> {
-                    QueryWrapper<AccountBill> abWrapper = new QueryWrapper<>();
-                    abWrapper.eq("accountId", customerAccount.getAccountId());
-                    if (queryPageBean.getStart() != null) {
-                        abWrapper.ge("date", DateUtil.fmtData(queryPageBean.getStart()));
-                    }
-                    if (queryPageBean.getEnd() != null) {
-                        abWrapper.le("date", DateUtil.fmtData(queryPageBean.getEnd()));
-                    }
-                    double adCost = 0;
-                    List<AccountBill> abList = accountBillDAO.selectList(abWrapper);
-                    for (AccountBill ab : abList) {
-                        adCost += ab.getAmount();
-                    }
-                    customerAccount.setAdCost(adCost);
-
-                    QueryWrapper<AccountRecharge> arWrapper = new QueryWrapper<>();
-                    arWrapper.eq("accountId", customerAccount.getId());
-
-                    List<AccountRecharge> accountRecharges = accountRechargeDAO.selectList(arWrapper);
-                    double accountRechargeAmount = 0;
-                    for (AccountRecharge accountRecharge : accountRecharges) {
-                        accountRechargeAmount += accountRecharge.getRechargeAmount();
-                    }
-                    customerAccount.setAccountRechargeAmount(accountRechargeAmount);
-
+            customerAccount -> {
+                if (customerAccount.getCustomerId() != null) {
+                    QueryWrapper<Customer> cWrapper = new QueryWrapper<>();
+                    cWrapper.eq("id", customerAccount.getCustomerId());
+                    Customer customer = customerDAO.selectOne(cWrapper);
+                    customerAccount.setCustomerName(customer.getCorpName());
                 }
+
+                // 时间内花费总额
+                QueryWrapper<AccountBill> abWrapper = new QueryWrapper<>();
+                abWrapper.eq("accountId", customerAccount.getAccountId());
+                if (queryPageBean.getStart() != null) {
+                    abWrapper.ge("date", DateUtil.fmtData(queryPageBean.getStart()));
+                }
+                if (queryPageBean.getEnd() != null) {
+                    abWrapper.le("date", DateUtil.fmtData(queryPageBean.getEnd()));
+                }
+                double adCost = 0;
+                List<AccountBill> abList = accountBillDAO.selectList(abWrapper);
+                for (AccountBill ab : abList) {
+                    adCost += ab.getAmount();
+                }
+                customerAccount.setAdCost(adCost);
+
+                // 充值总额
+                QueryWrapper<AccountRecharge> arWrapper = new QueryWrapper<>();
+                arWrapper.eq("accountId", customerAccount.getId());
+                List<AccountRecharge> accountRecharges = accountRechargeDAO.selectList(arWrapper);
+                double accountRechargeAmount = 0;
+                for (AccountRecharge accountRecharge : accountRecharges) {
+                    accountRechargeAmount += accountRecharge.getRechargeAmount();
+                }
+                customerAccount.setAccountRechargeAmount(accountRechargeAmount);
+
+            }
         );
 
         List<CustomerAccount> r = result.getRecords().stream().
-                sorted(Comparator.comparing(CustomerAccount::getAdCost).reversed()).collect(Collectors.toList());
+            sorted(Comparator.comparing(CustomerAccount::getAdCost).reversed()).collect(Collectors.toList());
         return new PageResult<>(Long.valueOf(dao.selectCount(wrapper)), r);
     }
 }
