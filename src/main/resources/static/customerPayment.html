@@ -91,24 +91,23 @@
 
                     <div class="btn-group">
                         <div class="input-group mt-4">
-                            <!--                        <div class="card-title">所有用户-3</div>-->
                             <div class="card-title" style="width: 210px">
                                 <input type="text" class="form-control" name="daterange"/>
                             </div>
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                {{actorBtn}}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
-                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :
-                                    value}}
-                                </button>
-                            </div>
-                            <label>
-                                <input type="text" class="form-control" value="搜索"/>
-                            </label>
+                            <!--                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"-->
+                            <!--                                    data-toggle="dropdown"-->
+                            <!--                                    aria-haspopup="true" aria-expanded="false">-->
+                            <!--                                {{actorBtn}}-->
+                            <!--                            </button>-->
+                            <!--                            <div class="dropdown-menu dropdown-menu-right">-->
+                            <!--                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"-->
+                            <!--                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key :-->
+                            <!--                                    value}}-->
+                            <!--                                </button>-->
+                            <!--                            </div>-->
+                            <!--                            <label>-->
+                            <!--                                <input type="text" class="form-control" value="搜索"/>-->
+                            <!--                            </label>-->
                         </div>
                     </div>
                     <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
@@ -226,9 +225,8 @@
             alwaysShowCalendars: true
         }, function (start, end, label) {
             $('#tb_departments').bootstrapTable('refresh', {
-                url: '/customer/list?start=' + start + "&end=" + end
+                url: '/customerPayment/list?customerId=' + customerIdC + '&start=' + start + "&end=" + end
             });
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
     var select_key = "0"
@@ -252,18 +250,18 @@
             let params = new URLSearchParams(uri);
             this.$data.customerId = params.get("customerId");
             customerIdC = params.get("customerId");
-            axios.get("/admin/user/deposit_approval/deposit").then((response) => {
-                this.$data.userDeposit = response.data;
-            });
-            axios.get("/admin/user/deposit_approval/overage").then((response) => {
-                this.$data.userOverage = response.data;
-            });
-            axios.get("/admin/user/account/total").then((response) => {
-                this.$data.accountCount = response.data;
-            });
-            axios.get("/admin/user/account_recharge/amount").then((response) => {
-                this.$data.accountRechargeAmount = response.data;
-            });
+            // axios.get("/admin/user/deposit_approval/deposit").then((response) => {
+            //     this.$data.userDeposit = response.data;
+            // });
+            // axios.get("/admin/user/deposit_approval/overage").then((response) => {
+            //     this.$data.userOverage = response.data;
+            // });
+            // axios.get("/admin/user/account/total").then((response) => {
+            //     this.$data.accountCount = response.data;
+            // });
+            // axios.get("/admin/user/account_recharge/amount").then((response) => {
+            //     this.$data.accountRechargeAmount = response.data;
+            // });
         },
         methods: {
             selectActor: function (key) {
@@ -363,13 +361,8 @@
             align: 'center',
             valign: 'middle',
             formatter: function (value, row, index) {
-                if (row.status === 0) {
-                    return toApprovalBtnGroup(row, index);
-                } else if (row.status === 1) {
-                    return "<button class=\'btn btn-secondary \' >已通过</button>"
-                } else if (row.status === 2) {
-                    return "<button class=\'btn btn-secondary \' >已拒绝</button>"
-                }
+                return toApprovalBtnGroup(row, index);
+
             }
         }
         ],
@@ -380,7 +373,7 @@
 
     // 操作按钮
     function toApprovalBtnGroup(row, index) {
-        return '<button class=\'btn btn-danger \' onclick="onRefuse(' + row.id + ',' + row.deposit + ')" >删除</button> '
+        return '<button class=\'btn btn-danger \' disabled="disabled" onclick="onRefuse(' + row.id + ',' + row.deposit + ')" >删除</button> '
     }
 
     function onRefuse(id, deposit) {

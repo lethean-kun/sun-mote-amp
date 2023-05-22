@@ -36,10 +36,10 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
         }
 
         if (queryPageBean.getStart() != null) {
-            wrapper.ge("createdAt", DateUtil.fmtData(queryPageBean.getStart()));
+            wrapper.ge("createdAt", DateUtil.fmtDataWithSec(queryPageBean.getStart()));
         }
         if (queryPageBean.getEnd() != null) {
-            wrapper.le("createdAt", DateUtil.fmtData(queryPageBean.getEnd()));
+            wrapper.le("createdAt", DateUtil.fmtDataWithSec(queryPageBean.getEnd()));
         }
 
         Page<CustomerPayment> result = dao.selectPage(new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()), wrapper);

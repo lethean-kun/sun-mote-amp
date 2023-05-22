@@ -41,12 +41,12 @@ public class AccountRechargeServiceImpl implements AccountRechargeService {
         if (accountId != null) {
             wrapper.eq("accountId", accountId);
         }
-        // TODO 有bug
+
         if (queryPageBean.getStart() != null) {
-            wrapper.ge("createdAt", DateUtil.fmtData(queryPageBean.getStart()));
+            wrapper.ge("createdAt", DateUtil.fmtDataWithSec(queryPageBean.getStart()));
         }
         if (queryPageBean.getEnd() != null) {
-            wrapper.le("createdAt", DateUtil.fmtData(queryPageBean.getEnd()));
+            wrapper.le("createdAt", DateUtil.fmtDataWithSec(queryPageBean.getEnd()));
         }
 
         Page<AccountRecharge> result = dao.selectPage(new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()), wrapper);

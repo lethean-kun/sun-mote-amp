@@ -20,7 +20,7 @@ public interface UserDAO extends BaseMapper<User> {
     @Select("select * from User where id = ${id}")
     User getUserById(Long id);
 
-    @Insert("insert into User(username,password,corpName,rebate) values('${user.username}', '${user.password}', '${user.corpName}', ${user.rebate})")
+    @Insert("insert into User(username,password) values('${user.username}', '${user.password}')")
     void create(@Param("user") User user);
 
     @Update({

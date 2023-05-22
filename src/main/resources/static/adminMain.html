@@ -39,7 +39,7 @@
                                 class="mdi mdi-deskphone fs-22"></i></span>
                         <span class="fs-22 lh-22">{{userDeposit}} {{currency}}</span>
                     </div>
-                    <div class="text-right">用户付款总额</div>
+                    <div class="text-right">todo...</div>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                         <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-apps fs-22"></i></span>
                         <span class="fs-22 lh-22">{{userOverage}} {{currency}}</span>
                     </div>
-                    <div class="text-right">用户余额</div>
+                    <div class="text-right">todo...</div>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
                                 class="mdi mdi-account fs-22"></i></span>
                         <span class="fs-22 lh-22">{{accountCount}} 个</span>
                     </div>
-                    <div class="text-right">总账户数量</div>
+                    <div class="text-right">todo...</div>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                                 class="mdi mdi-account-alert fs-22"></i></span>
                         <span class="fs-22 lh-22">{{accountRechargeAmount}} {{currency}}</span>
                     </div>
-                    <div class="text-right">账户充值总额</div>
+                    <div class="text-right">todo...</div>
                 </div>
             </div>
         </div>
@@ -91,7 +91,6 @@
 
                     <div class="btn-group">
                         <div class="input-group mt-4">
-                            <!--                        <div class="card-title">所有用户-3</div>-->
                             <div class="card-title" style="width: 210px">
                                 <input type="text" class="form-control" name="daterange"/>
                             </div>
@@ -224,20 +223,6 @@
                 </header>
 
                 <div class="card-body">
-                    <!--                    <div class="btn-group">-->
-                    <!--                        <div class="input-group mb-3">-->
-                    <!--                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"-->
-                    <!--                                    data-toggle="dropdown"-->
-                    <!--                                    aria-haspopup="true" aria-expanded="false">-->
-                    <!--                                {{actorBtn}}-->
-                    <!--                            </button>-->
-                    <!--                            <div class="dropdown-menu dropdown-menu-right">-->
-                    <!--                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"-->
-                    <!--                                        v-for="(value, key) in select_map">{{(value==''||value==null) ? key : value}}-->
-                    <!--                                </button>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                     <table id="tb_departments"></table>
                 </div>
             </div>
@@ -288,7 +273,7 @@
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
     });
-    var select_key = "0"
+    // var select_key = "0"
     var vue = new Vue({
         el: '#app',
         data: {
@@ -302,37 +287,37 @@
 
         },
         created() {
-            axios.get("/admin/user/deposit_approval/deposit").then((response) => {
-                this.$data.userDeposit = response.data;
-            });
-            axios.get("/admin/user/deposit_approval/overage").then((response) => {
-                this.$data.userOverage = response.data;
-            });
-            axios.get("/admin/user/account/total").then((response) => {
-                this.$data.accountCount = response.data;
-            });
-            axios.get("/admin/user/account_recharge/amount").then((response) => {
-                this.$data.accountRechargeAmount = response.data;
-            });
+            // axios.get("/admin/user/deposit_approval/deposit").then((response) => {
+            //     this.$data.userDeposit = response.data;
+            // });
+            // axios.get("/admin/user/deposit_approval/overage").then((response) => {
+            //     this.$data.userOverage = response.data;
+            // });
+            // axios.get("/admin/user/account/total").then((response) => {
+            //     this.$data.accountCount = response.data;
+            // });
+            // axios.get("/admin/user/account_recharge/amount").then((response) => {
+            //     this.$data.accountRechargeAmount = response.data;
+            // });
         },
         methods: {
             selectActor: function (key) {
-                select_key = key
-                let value = this.$data.select_map[key];
-                this.$data.actorBtn = (value === "" || value == null) ? key : value;
-                if (key === "0") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval'
-                    });
-                } else if (key === "1") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval?status=1&status=2'
-                    });
-                } else if (key === "2") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: '/admin/user/deposit_approval?status=0'
-                    });
-                }
+                // select_key = key
+                // let value = this.$data.select_map[key];
+                // this.$data.actorBtn = (value === "" || value == null) ? key : value;
+                // if (key === "0") {
+                //     $('#tb_departments').bootstrapTable('refresh', {
+                //         url: '/admin/user/deposit_approval'
+                //     });
+                // } else if (key === "1") {
+                //     $('#tb_departments').bootstrapTable('refresh', {
+                //         url: '/admin/user/deposit_approval?status=1&status=2'
+                //     });
+                // } else if (key === "2") {
+                //     $('#tb_departments').bootstrapTable('refresh', {
+                //         url: '/admin/user/deposit_approval?status=0'
+                //     });
+                // }
             },
             onSearchCustomer() {
                 $('#tb_departments').bootstrapTable('refresh', {
