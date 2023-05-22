@@ -121,7 +121,7 @@
                                                 <label for="rechargeAmount-i"
                                                        class="col-sm-3 col-form-label">充值金额：</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" value="" id="rechargeAmount-i"
+                                                    <input type="number" value="" id="rechargeAmount-i"
                                                            placeholder="请输入..."
                                                            class="form-control">
                                                 </div>
@@ -300,7 +300,14 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                if (row == null) {
+                    return "未知";
+                }
+                row = row.replace(/T/, " ");
+                row = row.replace(/\./, " ");
+                row = row.replace(/\+/, " ");
+                row = row.substr(0, 20);
+                return row;
             }
         }, {
             field: 'operate',

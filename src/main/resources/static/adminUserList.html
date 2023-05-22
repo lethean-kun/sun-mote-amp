@@ -10,10 +10,6 @@
     <link href="js/jquery-confirm/jquery-confirm.min.css" rel="stylesheet">
     <link href="css/materialdesignicons.min.css" rel="stylesheet">
     <link href="css/style.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 </head>
 
 <body>
@@ -24,27 +20,10 @@
             <div class="card">
                 <header class="card-header">
                     <div class="btn-group">
-                        <div class="input-group mt-4" >
-                            <!--                        <div class="card-title">所有用户-3</div>-->
-                            <div class="card-title" style="width: 200px">
-                                <input type="text" class="form-control" name="daterange"/>
-                            </div>
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle mb-3"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                {{actorBtn}}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button" v-on:click="selectActor(key)"
-                                        v-for="(value, key) in select_map">{{(value == '' || value == null) ? key : value}}
-                                </button>
-                            </div>
-                            <label>
-                                <input type="text" class="form-control" value="搜索"/>
-                            </label>
+                        <div class="input-group mt-4">
+                            <div class="card-title">所有用户</div>
                         </div>
                     </div>
-
 
 
                     <button class="btn btn-primary" data-target="#myModal" data-toggle="modal">
@@ -84,20 +63,6 @@
                                                            class="form-control" value="">
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="rebate" class="col-sm-3 col-form-label">返点：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="number" id="rebate" placeholder="请输入..."
-                                                           class="form-control" value="">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="corpName" class="col-sm-3 col-form-label">公司名：</label>
-                                                <div class="col-sm-8">
-                                                    <input type="text" value="" id="corpName" placeholder="请输入..."
-                                                           class="form-control">
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 
@@ -124,7 +89,7 @@
 
 </div>
 
-<!--<script type="text/javascript" src="js/jquery.min.js"></script>-->
+<script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/popper.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/main.min.js"></script>
@@ -136,68 +101,12 @@
 <script type="text/javascript" src="js/bootstrap-table/bootstrap-table.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script type="text/javascript">
-
-    var select_key = "0"
-    var vue = new Vue({
-        el: '#app',
-        data: {
-            accountRechargeAmount: "加载中...",
-            actorBtn: "全部",
-            select_map: {"0": "全部", "1": "Facebook", "2": "Google"},
-            userId: "",
-            accountId: "",
-            url: ""
-        },
-        created() {
-            let uri = window.location.search.substring(1);
-            let params = new URLSearchParams(uri);
-            this.$data.userId = params.get("userId");
-            this.$data.accountId = params.get("accountId");
-
-            var url = '/admin/user/account_recharge_approval?userId=' + this.$data.userId;
-
-            var accountRechargeAmountUrl = '/admin/user/account_recharge/amount?userId=' + this.$data.userId;
-
-
-            if (this.$data.accountId !== '' && this.$data.accountId !== null) {
-                url = url + "&accountId=" + this.$data.accountId;
-                accountRechargeAmountUrl = accountRechargeAmountUrl + "&accountId=" + this.$data.accountId;
-            }
-            this.$data.url = url;
-
-            axios.get(accountRechargeAmountUrl).then((response) => {
-                this.$data.accountRechargeAmount = response.data;
-            });
-
-        },
-        methods: {
-            selectActor: function (key) {
-                select_key = key
-                let value = this.$data.select_map[key];
-                this.$data.actorBtn = (value === "" || value == null) ? key : value;
-                var url = this.$data.url;
-                if (key === "0") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: url
-                    });
-                } else if (key === "1") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: url + '&status=1&status=2'
-                    });
-                } else if (key === "2") {
-                    $('#tb_departments').bootstrapTable('refresh', {
-                        url: url + '&status=0'
-                    });
-                }
-            },
-        }
-    });
     $(function () {
         $('input[name="daterange"]').daterangepicker({
             opens: 'left'
         }, function (start, end, label) {
             $('#tb_departments').bootstrapTable('refresh', {
-                url:   '/test?start=' + start
+                url: '/test?start=' + start
             });
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
@@ -259,16 +168,6 @@
                 align: 'center',
                 valign: 'middle'
             }, {
-                field: 'corpName',
-                title: '公司名称',
-                align: 'center',
-                valign: 'middle'
-            }, {
-                field: 'rebate',
-                title: '返点',
-                align: 'center',
-                valign: 'middle'
-            }, {
                 field: 'role',
                 title: '用户角色',
                 align: 'center',
@@ -289,19 +188,7 @@
                 formatter: function (value, row, index) {
                     return userBtnGroup(row, index);
                 },
-                events: {
-                    'click #user-pay': function (event, value, row, index) {
-                        showUserPays(row);
-                    },
-                    'click #user-account': function (event, value, row, index) {
-                        showUserAccounts(row);
-                    },
-                    'click #user-account-recharge': function (event, value, row, index) {
-                        showUserAccountRecharge(row);
-                    },
-
-
-                }
+                events: {}
             }
         ],
         onLoadSuccess: function (data) {
@@ -310,10 +197,7 @@
     });
 
     function userBtnGroup(row, index) {
-        return '<button id="user-pay" class=\'btn btn-primary \' >付款</button>  ' +
-            '<button id="user-account" class=\'btn btn-primary \'>开户</button>  ' +
-            '<button id="user-account-recharge" class=\'btn btn-primary \'>充值</button>  ' +
-            '<button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >修改</button>' +
+        return '<button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >修改</button>' +
             '                    <!--fade 淡入淡出-->\n' +
             '                    <div class="modal fade" id="pass' + index + '" aria-labelledby="myModallabel' + index + '" aria-hidden="true"\n' +
             '                         tabindex="-1">\n' +
@@ -340,18 +224,11 @@
             '                                                       placeholder="password" class="form-control">\n' +
             '                                           </div>\n' +
             '                                        </div>\n' +
-            '                                        <div class="form-group row">\n' +
-            '                                           <label class="col-sm-3 col-form-label">返点：</label>\n' +
-            '                                           <div class="col-sm-8">\n' +
-            '                                                <input type="number" value="' + row.rebate + '" id = "rebate' + row.id + '" value="" name="rebate"\n' +
-            '                                                       placeholder="rebate" class="form-control">\n' +
-            '                                           </div>\n' +
-            '                                        </div>\n' +
             '                                    </div>\n' +
             '                                    <div class="modal-footer">\n' +
             '                                        <button class="btn btn-default" type="button" data-dismiss="modal">关闭\n' +
             '                                        </button>\n' +
-            '                                        <button class="btn btn-success"  type="button" onclick="onUpdate(' + row.id + ',$(\'#password' + row.id + '\').val(),$(\'#rebate' + row.id + '\').val())">通过</button>\n' +
+            '                                        <button class="btn btn-success"  type="button" onclick="onUpdate(' + row.id + ',$(\'#password' + row.id + '\').val())">通过</button>\n' +
             '                                    </div>\n' +
             '                            </div>\n' +
             '                        </div>\n' +
@@ -396,10 +273,9 @@
         });
     }
 
-    function onUpdate(id, password, rebate) {
+    function onUpdate(id, password) {
         $.post("/admin/user/" + id, {
-            "password": password,
-            "rebate": rebate
+            "password": password
         }, function (data, status) {
             $('.modal-backdrop').remove();
             $('body').removeClass('modal-open');
