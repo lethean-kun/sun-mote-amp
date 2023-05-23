@@ -1,7 +1,7 @@
 CREATE
     DATABASE sunmote;
 
-CREATE TABLE User
+CREATE TABLE sunmote.User
 (
     id         BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
@@ -17,10 +17,10 @@ CREATE TABLE User
     COMMENT '用户表';
 
 INSERT INTO sunmote.User (username, password, status, isDelete, role)
-    VALUE ('admin', '$2a$10$m4Zpfj/pWDfqV4sBqs6f0O9mTGwOnVhkIDk90u2vieHjxGzxXNZii', 0, 0, 'ADMIN');
+    VALUE ('Sunmote', '$2a$10$bYlokP6PmrpQyQNgNiiWW.k8hRXjMim8Mw9N2IMQPhwdG0tnMsqC6', 0, 0, 'ADMIN');
 
 
-CREATE TABLE Customer
+CREATE TABLE sunmote.Customer
 (
     id              BIGINT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
