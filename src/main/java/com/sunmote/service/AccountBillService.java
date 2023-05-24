@@ -9,6 +9,6 @@ public interface AccountBillService {
 
     void update(Long id, AccountBill accountBill);
 
-    void upsert(String date, AccountBill accountBill);
+    boolean upsert(String date, AccountBill accountBill);
 
 }

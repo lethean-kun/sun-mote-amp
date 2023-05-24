@@ -49,7 +49,6 @@ public class SyncSchedule {
                 .requestCurrencyField();
 
             try {
-                // TODO 分页
                 APINodeList<AdAccount> adAccounts = adAccountsExecute.execute();
 
                 while (adAccounts.size() != 0) {
@@ -91,11 +90,32 @@ public class SyncSchedule {
                         for (AdsInsights todayInsight : todayInsights) {
                             todayCost += Double.parseDouble(todayInsight.getFieldSpend());
                         }
-                        accountBillService.upsert(
+                        final boolean insert = accountBillService.upsert(
                             date,
                             AccountBill.builder().date(date).accountId(adAccount.getFieldAccountId()).amount(todayCost)
                                 .platform(CustomerAccount.Platform.Facebook.name()).build()
                         );
+                        // 今天第一次insert，需要拉一下昨天的数据更新下
+                        if (insert) {
+                            AdAccount.APIRequestGetInsights yesterdayInsightsApi = adAccount.getInsights()
+                                .setDatePreset(AdsInsights.EnumDatePreset.VALUE_YESTERDAY).requestField("spend");
+                            APINodeList<AdsInsights> yesterdayInsights = yesterdayInsightsApi.execute();
+                            double yesterdayCost = 0;
+                            LocalDate yesterday = LocalDate.now().minusDays(1);
+                            String yesterdayDate = yesterday.format(formatter);
+                            for (AdsInsights yesterdayInsight : yesterdayInsights) {
+                                yesterdayCost += Double.parseDouble(yesterdayInsight.getFieldSpend());
+                            }
+                            accountBillService.upsert(
+                                yesterdayDate,
+                                AccountBill.builder()
+                                    .date(yesterdayDate)
+                                    .accountId(adAccount.getFieldAccountId())
+                                    .amount(yesterdayCost)
+                                    .platform(CustomerAccount.Platform.Facebook.name())
+                                    .build()
+                            );
+                        }
 
                     }
                     adAccounts = adAccounts.nextPage();

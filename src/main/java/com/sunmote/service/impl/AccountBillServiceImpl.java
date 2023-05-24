@@ -29,7 +29,7 @@ public class AccountBillServiceImpl implements AccountBillService {
     }
 
     @Override
-    public void upsert(String date, AccountBill accountBill) {
+    public boolean upsert(String date, AccountBill accountBill) {
         accountBill.setDate(date);
 
         QueryWrapper<AccountBill> caWrapper = new QueryWrapper<>();
@@ -39,9 +39,11 @@ public class AccountBillServiceImpl implements AccountBillService {
 
         if (accountBills.size() < 1) {
             accountBillDAO.insert(accountBill);
+            return true;
         } else {
             accountBill.setId(accountBills.get(0).getId());
             accountBillDAO.updateById(accountBill);
+            return false;
         }
     }
 }
