@@ -95,28 +95,25 @@ public class SyncSchedule {
                             AccountBill.builder().date(date).accountId(adAccount.getFieldAccountId()).amount(todayCost)
                                 .platform(CustomerAccount.Platform.Facebook.name()).build()
                         );
-                        // 今天第一次insert，需要拉一下昨天的数据更新下
-                        if (insert) {
-                            AdAccount.APIRequestGetInsights yesterdayInsightsApi = adAccount.getInsights()
-                                .setDatePreset(AdsInsights.EnumDatePreset.VALUE_YESTERDAY).requestField("spend");
-                            APINodeList<AdsInsights> yesterdayInsights = yesterdayInsightsApi.execute();
-                            double yesterdayCost = 0;
-                            LocalDate yesterday = LocalDate.now().minusDays(1);
-                            String yesterdayDate = yesterday.format(formatter);
-                            for (AdsInsights yesterdayInsight : yesterdayInsights) {
-                                yesterdayCost += Double.parseDouble(yesterdayInsight.getFieldSpend());
-                            }
-                            accountBillService.upsert(
-                                yesterdayDate,
-                                AccountBill.builder()
-                                    .date(yesterdayDate)
-                                    .accountId(adAccount.getFieldAccountId())
-                                    .amount(yesterdayCost)
-                                    .platform(CustomerAccount.Platform.Facebook.name())
-                                    .build()
-                            );
+                        // 需要拉一下昨天的数据更新下
+                        AdAccount.APIRequestGetInsights yesterdayInsightsApi = adAccount.getInsights()
+                            .setDatePreset(AdsInsights.EnumDatePreset.VALUE_YESTERDAY).requestField("spend");
+                        APINodeList<AdsInsights> yesterdayInsights = yesterdayInsightsApi.execute();
+                        double yesterdayCost = 0;
+                        LocalDate yesterday = LocalDate.now().minusDays(1);
+                        String yesterdayDate = yesterday.format(formatter);
+                        for (AdsInsights yesterdayInsight : yesterdayInsights) {
+                            yesterdayCost += Double.parseDouble(yesterdayInsight.getFieldSpend());
                         }
-
+                        accountBillService.upsert(
+                            yesterdayDate,
+                            AccountBill.builder()
+                                .date(yesterdayDate)
+                                .accountId(adAccount.getFieldAccountId())
+                                .amount(yesterdayCost)
+                                .platform(CustomerAccount.Platform.Facebook.name())
+                                .build()
+                        );
                     }
                     adAccounts = adAccounts.nextPage();
                 }
