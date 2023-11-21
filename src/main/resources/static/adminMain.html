@@ -380,7 +380,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "0" : row;
+                return row == null ? "0" : row.toFixed(2);
             }
         }, {
             field: 'customerBalance',
@@ -388,7 +388,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "0" : row;
+                return row == null ? "0" : row.toFixed(2);
             }
         }, {
             field: 'settlement',

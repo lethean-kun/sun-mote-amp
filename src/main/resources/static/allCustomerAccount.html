@@ -203,7 +203,7 @@
         sidePagination: "server",            // 分页方式：client客户端分页，server服务端分页
         pageNumber: 1,                       // 初始化加载第一页，默认第一页
         pageSize: 1000,                        // 每页的记录行数
-        pageList: [1000, 1500],         // 可供选择的每页的行数
+        pageList: [1000, 2000],         // 可供选择的每页的行数
 
         columns: [{
             field: 'id',
@@ -244,7 +244,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row.toFixed(2);
             }
         }, {
             field: 'budgetLimit',
@@ -252,7 +252,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row.toFixed(2);
             }
         }, {
             field: 'remainingAmount',
@@ -260,7 +260,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row.toFixed(2);
             }
         }, {
             field: 'accountRechargeAmount',
@@ -268,7 +268,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row.toFixed(2);
             }
         }, {
             field: 'costAmount',
@@ -276,7 +276,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (row) {
-                return row == null ? "未知" : row;
+                return row == null ? "未知" : row.toFixed(2);
             }
         }, {
             field: 'platform',
@@ -292,7 +292,7 @@
             align: 'center',
             valign: 'middle',
             formatter: function (value, row, index) {
-                if (row.customerId === null) {
+                // if (row.customerId === null) {
                     return '<button id="account-recharge" class=\'btn btn-primary \' >充值详情</button>  ' +
                         '<button class=\'btn btn-primary \' data-target="#pass' + index + '" data-toggle="modal" >修改客户</button>' +
                         '                    <!--fade 淡入淡出-->\n' +
@@ -323,10 +323,10 @@
                         '                            </div>\n' +
                         '                        </div>\n' +
                         '                    </div> ';
-                } else {
-                    return '<button id="account-recharge" class=\'btn btn-primary \' >充值详情</button>  ' +
-                        '<button id="account-update" class=\'btn btn-primary \' disabled = "disabled">修改客户</button>  '
-                }
+                // } else {
+                //     return '<button id="account-recharge" class=\'btn btn-primary \' >充值详情</button>  ' +
+                //         '<button id="account-update" class=\'btn btn-primary \' disabled = "disabled">修改客户</button>  '
+                // }
             },
             events: {
                 'click #account-recharge': function (event, value, row, index) {
