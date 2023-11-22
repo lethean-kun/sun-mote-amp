@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CustomerAccountServiceImpl implements CustomerAccountService {
@@ -41,6 +43,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
     @Override
     public void create(final CustomerAccount customer) {
+
         dao.insert(customer);
     }
 
@@ -76,41 +79,54 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
             new Page<>(queryPageBean.getPage(), queryPageBean.getLimit()),
             wrapper
         );
+
+        // 查询客户name
+        List<Long> allCustomerId = result.getRecords().stream().map(CustomerAccount::getCustomerId).collect(Collectors.toList());
+        List<Customer> customers = customerDAO.selectBatchIds(allCustomerId);
+        // 转换customers 为map，id为id，key为Customer
+        Map<Long, String> idToCustomerName = customers.stream().collect(Collectors.toMap(Customer::getId, Customer::getCorpName));
+
+        // 花费
+        List<String> allAccountId = result.getRecords().stream().map(CustomerAccount::getAccountId).collect(Collectors.toList());
+        QueryWrapper<AccountBill> abWrapper = new QueryWrapper<>();
+        abWrapper.in("accountId", allAccountId);
+        if (queryPageBean.getStart() != null) {
+            abWrapper.ge("date", DateUtil.fmtData(queryPageBean.getStart()));
+        }
+        if (queryPageBean.getEnd() != null) {
+            abWrapper.le("date", DateUtil.fmtData(queryPageBean.getEnd()));
+        }
+        Map<String, List<AccountBill>> abMap = accountBillDAO.selectList(abWrapper).stream().collect(Collectors.groupingBy(AccountBill::getAccountId));
+
+        // 充值总额
+
+        QueryWrapper<AccountRecharge> arWrapper = new QueryWrapper<>();
+        arWrapper.in("accountId", allAccountId);
+        Map<String, List<AccountRecharge>> arMap = accountRechargeDAO.selectList(arWrapper).stream().collect(Collectors.groupingBy(AccountRecharge::getAccountId));
+
         result.getRecords().forEach(
             customerAccount -> {
                 if (customerAccount.getCustomerId() != null) {
-                    QueryWrapper<Customer> cWrapper = new QueryWrapper<>();
-                    cWrapper.eq("id", customerAccount.getCustomerId());
-                    Customer customer = customerDAO.selectOne(cWrapper);
-                    customerAccount.setCustomerName(customer.getCorpName());
+                    customerAccount.setCustomerName(idToCustomerName.get(customerAccount.getCustomerId()));
                 }
 
                 // 时间内花费总额
-                QueryWrapper<AccountBill> abWrapper = new QueryWrapper<>();
-                abWrapper.eq("accountId", customerAccount.getAccountId());
-                if (queryPageBean.getStart() != null) {
-                    abWrapper.ge("date", DateUtil.fmtData(queryPageBean.getStart()));
-                }
-                if (queryPageBean.getEnd() != null) {
-                    abWrapper.le("date", DateUtil.fmtData(queryPageBean.getEnd()));
-                }
                 double adCost = 0;
-                List<AccountBill> abList = accountBillDAO.selectList(abWrapper);
-                for (AccountBill ab : abList) {
-                    adCost += ab.getAmount();
+                if (abMap.get(customerAccount.getAccountId()) != null) {
+                    for (AccountBill ab : abMap.get(customerAccount.getAccountId())) {
+                        adCost += ab.getAmount();
+                    }
                 }
                 customerAccount.setAdCost(adCost);
 
                 // 充值总额
-                QueryWrapper<AccountRecharge> arWrapper = new QueryWrapper<>();
-                arWrapper.eq("accountId", customerAccount.getId());
-                List<AccountRecharge> accountRecharges = accountRechargeDAO.selectList(arWrapper);
                 double accountRechargeAmount = 0;
-                for (AccountRecharge accountRecharge : accountRecharges) {
-                    accountRechargeAmount += accountRecharge.getRechargeAmount();
+                if (arMap.get(customerAccount.getAccountId()) != null) {
+                    for (AccountRecharge accountRecharge : arMap.get(customerAccount.getAccountId())) {
+                        accountRechargeAmount += accountRecharge.getRechargeAmount();
+                    }
                 }
                 customerAccount.setAccountRechargeAmount(accountRechargeAmount);
-
             }
         );
 
