@@ -40,7 +40,7 @@ public class CustomerAccountController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public void createCustomerAccount(CustomerAccount customer) {
-        customerAccountService.create(customer);
+        customerAccountService.upsert(customer.getAccountId(), customer);
     }
 
     @PostMapping("/{id}")
